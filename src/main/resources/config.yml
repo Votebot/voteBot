@@ -1,0 +1,16 @@
+bot:
+  token: 'token'
+  defaultshards: 2
+database:
+  user: votebot
+  password: password
+  keyspace: votebot
+  contactpoints:
+    - 173.212.241.148
+games:
+  - 'w: schlaubi.me'
+  - 'p: With your votes'
+  - 'l: v!help'
+prefixes:
+  default: v!
+  debug: vt!

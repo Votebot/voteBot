@@ -1,15 +1,14 @@
-package me.schlaubi.votebot.core.entities;
+package me.schlaubi.votebot.io.database;
 
 import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import me.schlaubi.votebot.io.database.Cassandra;
 import me.schlaubi.votebot.util.NameThreadFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Log4j2
-public class DatabaseEntity<T> {
+public abstract class DatabaseEntity<T> {
 
     @Transient
     private final static ExecutorService executor = Executors.newCachedThreadPool(new NameThreadFactory("Database"));
@@ -28,12 +27,13 @@ public class DatabaseEntity<T> {
     private final String logPrefix;
     @Column(name = "id")
     @Getter
+    @PartitionKey
     private long entityId;
 
-    public DatabaseEntity(Class<T> clazz, Cassandra cassandra, String logPrefix) {
+    public DatabaseEntity(Class<T> clazz, Cassandra cassandra, String logPrefix, long entityId) {
         this.logPrefix = logPrefix;
-        MappingManager mappingManager = new MappingManager(cassandra.getSession());
-        this.mapper = mappingManager.mapper(clazz);
+        this.mapper = cassandra.getMappingManager().mapper(clazz);
+        this.entityId = entityId;
     }
 
     public final void delete(T entity) {
@@ -57,7 +57,6 @@ public class DatabaseEntity<T> {
             @Override
             public void onSuccess(@Nullable Void aVoid) {
                 log.debug(String.format("[Database] %s Entity with id %s got saved", logPrefix, entityId));
-
             }
 
             @Override
