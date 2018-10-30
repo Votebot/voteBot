@@ -16,8 +16,6 @@ public class User extends SnowflakeDatabaseEntity<User> {
 
     @Column(name = "language")
     private String languageTag = "en-US";
-    @Transient
-    private UserPermissions permissions = new UserPermissions(getEntityId());
 
     public User(Long entityId) {
         super(User.class, VoteBot.getInstance().getDatabaseConnection(), "[USER]", entityId);
@@ -37,6 +35,11 @@ public class User extends SnowflakeDatabaseEntity<User> {
     public void setLocale(Locale locale) {
         this.languageTag = locale.toLanguageTag();
         save();
+    }
+
+    @Transient
+    public UserPermissions getPermissions() {
+        return new UserPermissions(entityId);
     }
 
     private void save() {

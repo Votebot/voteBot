@@ -22,6 +22,15 @@ public class VoteCache {
         return cacheList.stream().anyMatch(vote -> vote.getGuildId() == guild.getIdLong() && vote.getAuthorId() == user.getIdLong());
     }
 
+    public boolean isPollMessage(long messageId) {
+        return cacheList.stream().anyMatch(vote -> vote.getMessages().containsKey(messageId));
+    }
+
+    public Vote getVote(long messageId) {
+        final Optional<Vote> optional = cacheList.stream().filter(vote -> vote.getMessages().containsKey(messageId)).findFirst();
+        return optional.orElse(null);
+    }
+
     public Vote getVote(Guild guild, User user) {
         final Optional<Vote> optional = cacheList.stream().filter(vote -> vote.getGuildId() == guild.getIdLong() && vote.getAuthorId() == user.getIdLong()).findFirst();
         return optional.orElse(null);

@@ -6,8 +6,11 @@ import lombok.extern.log4j.Log4j2;
 import me.schlaubi.votebot.commands.general.HelpCommand;
 import me.schlaubi.votebot.commands.settings.LanguageCommand;
 import me.schlaubi.votebot.commands.settings.PrefixCommand;
+import me.schlaubi.votebot.commands.vote.CloseCommand;
 import me.schlaubi.votebot.commands.vote.CreateCommand;
+import me.schlaubi.votebot.commands.vote.InfoCommand;
 import me.schlaubi.votebot.core.GameAnimator;
+import me.schlaubi.votebot.core.VoteExecutor;
 import me.schlaubi.votebot.core.VoteManager;
 import me.schlaubi.votebot.core.cache.Cache;
 import me.schlaubi.votebot.core.command.CommandManager;
@@ -29,7 +32,6 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -96,6 +98,7 @@ public class VoteBot implements Closeable {
                         new ShardsListener(),
                         new CommandLogger(),
                         new SelfMentionListener(),
+                        new VoteExecutor(voteManager.getCache()),
                         this,
                         commandManager
                 );
@@ -113,7 +116,7 @@ public class VoteBot implements Closeable {
                 .addHeader("Authorization", configuration.getString("bot.token"))
                 .get()
                 .build();
-        try (Response response = httpClient.newCall(request).execute()) {
+        try (var response = httpClient.newCall(request).execute()) {
             assert response.body() != null;
             int shardCount = new JSONObject(response.body().string()).getInt("shards");
             log.info(String.format("[ShardManager] Starting with %d shards", shardCount));
@@ -129,7 +132,9 @@ public class VoteBot implements Closeable {
                 new HelpCommand(),
                 new PrefixCommand(),
                 new LanguageCommand(),
-                new CreateCommand()
+                new CreateCommand(),
+                new CloseCommand(),
+                new InfoCommand()
         );
     }
 

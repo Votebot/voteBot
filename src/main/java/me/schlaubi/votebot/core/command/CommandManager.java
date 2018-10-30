@@ -99,7 +99,7 @@ public class CommandManager implements Closeable {
 
     private void callCommand(Command command, CommandEvent commandEvent) {
         //Check permission
-        if (!command.getPermissions().isCovered(bot.getUserCache().get(commandEvent.getAuthor().getIdLong()).getPermissions(), commandEvent.getGuild())) {
+        if (!command.getPermissions().isCovered(bot.getUserCache().get(commandEvent.getAuthor()).getPermissions(), commandEvent.getGuild())) {
             bot.getEventManager().handle(new CommandPermissionViolationEvent(commandEvent, command));
             return;
         }

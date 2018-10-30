@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CommandCategory {
 
+    VOTE("Vote"),
     GENERAL("General"),
     SETTINGS("Settings");
 

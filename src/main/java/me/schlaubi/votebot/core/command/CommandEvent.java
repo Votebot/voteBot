@@ -2,6 +2,7 @@ package me.schlaubi.votebot.core.command;
 
 import lombok.Getter;
 import me.schlaubi.votebot.VoteBot;
+import me.schlaubi.votebot.core.command.permission.UserPermissions;
 import me.schlaubi.votebot.core.entities.Guild;
 import me.schlaubi.votebot.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -22,8 +23,8 @@ public class CommandEvent extends GuildMessageReceivedEvent {
         this.bot = bot;
         this.args = args;
         this.invocation = invocation;
-        this.databaseGuild = bot.getGuildCache().get(guild.getIdLong());
-        this.databaseUser = bot.getUserCache().get(getAuthor().getIdLong());
+        this.databaseGuild = bot.getGuildCache().get(guild);
+        this.databaseUser = bot.getUserCache().get(getAuthor());
     }
 
     public String getArguments() {
@@ -32,5 +33,9 @@ public class CommandEvent extends GuildMessageReceivedEvent {
 
     public String translate(String key) {
         return bot.getTranslationManager().getLocale(databaseUser).translate(key);
+    }
+
+    public UserPermissions getUserPermissions() {
+        return databaseUser.getPermissions();
     }
 }

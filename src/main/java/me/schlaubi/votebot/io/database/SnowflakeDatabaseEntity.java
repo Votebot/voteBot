@@ -12,7 +12,7 @@ public class SnowflakeDatabaseEntity<T> extends DatabaseEntity<T> implements ISn
     @Getter
     @PartitionKey
     @Column(name = "id")
-    private long entityId;
+    protected long entityId;
 
     public SnowflakeDatabaseEntity(Class<T> clazz, Cassandra cassandra, String logPrefix, long entityId) {
         super(clazz, cassandra, logPrefix);

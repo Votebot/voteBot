@@ -7,6 +7,6 @@ public class OwnerOnlyPermissions implements Permissions {
 
     @Override
     public boolean isCovered(UserPermissions userPermissions, Guild guild) {
-        return VoteBot.getInstance().getConfiguration().getLongList("owners").contains(userPermissions.getUser().getIdLong());
+        return VoteBot.getInstance().getConfiguration().getLongList("owners").contains(userPermissions.getUserId());
     }
 }

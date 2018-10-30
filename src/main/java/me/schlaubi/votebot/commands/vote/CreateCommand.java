@@ -12,11 +12,12 @@ import net.dv8tion.jda.core.entities.Message;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class CreateCommand extends Command {
 
     public CreateCommand() {
-        super(new String[]{"create", "add", "make"}, CommandCategory.GENERAL, Permissions.everyone(), "Creates a new vote", "<heading>|<option1>|<option2>|[option3]|...");
+        super(new String[]{"create", "add", "make", "vote", "poll"}, CommandCategory.VOTE, Permissions.everyone(), "Creates a new vote", "<heading>|<option1>|<option2>|[option3]|...");
     }
 
     @Override
@@ -31,6 +32,8 @@ public class CreateCommand extends Command {
         List<String> options = Arrays.asList(voteArgs).subList(1, voteArgs.length);
         if (options.size() < 1)
             return send(error(event.translate("command.create.tolessoptions.title"), event.translate("command.create.tolessoptions.description")));
+        //Look for dupes
+        options = options.stream().distinct().collect(Collectors.toList());
         //Create random emotes
         ThreadLocalRandom generator = ThreadLocalRandom.current();
         List<String> availableEmote = new ArrayList<>(Arrays.asList(Misc.EMOTES));
@@ -39,11 +42,11 @@ public class CreateCommand extends Command {
             int index = generator.nextInt(availableEmote.size());
             String emote = availableEmote.get(index);
             availableEmote.remove(index);
-            emotes.put(option, emote);
+            emotes.put(emote, option);
         }
-        Vote vote = manager.createVote(event.getMember(), heading, options, emotes, event.getMessage());
         Message voteMessage = sendMessageBlocking(event.getChannel(), info("Creating ...", "Please wait while the vote is beeing created "));
-        emotes.values().forEach(emote -> voteMessage.addReaction(emote).complete());
+        Vote vote = manager.createVote(event.getMember(), heading, options, emotes, voteMessage);
+        vote.addEmotes(voteMessage);
         voteMessage.editMessage(vote.buildEmbed().build()).queue();
         return send(success(event.translate("command.create.created.title"), event.translate("command.create.created.description")));
     }

@@ -101,5 +101,7 @@ fabric.properties
 .idea/compiler.xml
 .idea/inspectionProfiles/
 .idea/misc.xml
-pom.xml
 votebot.iml
+src/test/
+
+charts/
