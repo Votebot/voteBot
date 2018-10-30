@@ -4,7 +4,7 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Param;
 import lombok.extern.log4j.Log4j2;
 import me.schlaubi.votebot.io.database.Cassandra;
-import me.schlaubi.votebot.io.database.DatabaseEntity;
+import me.schlaubi.votebot.io.database.SnowflakeDatabaseEntity;
 import net.dv8tion.jda.core.entities.ISnowflake;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Log4j2
-public class Cache<T extends DatabaseEntity<T>> {
+public class Cache<T extends SnowflakeDatabaseEntity<T>> {
 
     private final Map<Long, T> cacheMap;
     private final Class<T> clazz;

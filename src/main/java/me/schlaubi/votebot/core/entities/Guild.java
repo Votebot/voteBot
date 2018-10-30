@@ -5,11 +5,11 @@ import com.datastax.driver.mapping.annotations.*;
 import lombok.Getter;
 import me.schlaubi.votebot.VoteBot;
 import me.schlaubi.votebot.core.cache.Cache;
-import me.schlaubi.votebot.io.database.DatabaseEntity;
+import me.schlaubi.votebot.io.database.SnowflakeDatabaseEntity;
 
 @Getter
 @Table(name = "guilds")
-public class Guild extends DatabaseEntity<Guild> {
+public class Guild extends SnowflakeDatabaseEntity<Guild> {
 
     @Column
     private String prefix = "v!";
@@ -19,9 +19,9 @@ public class Guild extends DatabaseEntity<Guild> {
         save();
     }
 
+    @SuppressWarnings("unused")
     public Guild() {
-        super(Guild.class, VoteBot.getInstance().getDatabaseConnection(), "[GUILD]", 0L);
-        save();
+        super(Guild.class, VoteBot.getInstance().getDatabaseConnection(), "[GUILD]", 0);
     }
 
     public void setPrefix(String prefix) {

@@ -6,13 +6,13 @@ import lombok.Getter;
 import me.schlaubi.votebot.VoteBot;
 import me.schlaubi.votebot.core.cache.Cache;
 import me.schlaubi.votebot.core.command.permission.UserPermissions;
-import me.schlaubi.votebot.io.database.DatabaseEntity;
+import me.schlaubi.votebot.io.database.SnowflakeDatabaseEntity;
 
 import java.util.Locale;
 
 @Getter
 @Table(name = "users")
-public class User extends DatabaseEntity<User> {
+public class User extends SnowflakeDatabaseEntity<User> {
 
     @Column(name = "language")
     private String languageTag = "en-US";
@@ -26,7 +26,7 @@ public class User extends DatabaseEntity<User> {
 
     @SuppressWarnings("unused")
     public User() {
-        super(User.class, VoteBot.getInstance().getDatabaseConnection(), "[USER]", 0L);
+        super(User.class, VoteBot.getInstance().getDatabaseConnection(), "[USER]", 0);
     }
 
     @Transient
