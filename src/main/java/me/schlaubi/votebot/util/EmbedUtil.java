@@ -1,9 +1,8 @@
 package me.schlaubi.votebot.util;
 
-import me.schlaubi.votebot.core.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 
-public class EmbedUtil {
+public class EmbedUtil extends SafeMessage {
     /**
      * Creates an success embed
      * @param title The title of the embed

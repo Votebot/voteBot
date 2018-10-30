@@ -6,6 +6,7 @@ import me.schlaubi.votebot.core.translation.TranslationLocale;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class FormatUtil extends EmbedUtil{
         stringBuilder.append("Command aliases: `").append(Arrays.toString(command.getAliases()).replace("[", "").replace("]", "")).append("`\n");
         stringBuilder.append("Description: `").append(command.getDescription()).append("`").append("\n");
         stringBuilder.append("Usage: `").append(buildUsage(command)).append("`\n");
-        command.getSubCommandAssociations().values().parallelStream().distinct().collect(Collectors.toList()).forEach(subCommand -> stringBuilder.append(buildUsage(subCommand)).append("\n"));
+        command.getSubCommandAssociations().values().stream().distinct().sorted(Comparator.comparing(Command::getName)).forEach(subCommand -> stringBuilder.append(buildUsage(subCommand)).append("\n"));
         return stringBuilder;
     }
 

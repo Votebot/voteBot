@@ -6,7 +6,9 @@ import lombok.extern.log4j.Log4j2;
 import me.schlaubi.votebot.commands.general.HelpCommand;
 import me.schlaubi.votebot.commands.settings.LanguageCommand;
 import me.schlaubi.votebot.commands.settings.PrefixCommand;
+import me.schlaubi.votebot.commands.vote.CreateCommand;
 import me.schlaubi.votebot.core.GameAnimator;
+import me.schlaubi.votebot.core.VoteManager;
 import me.schlaubi.votebot.core.cache.Cache;
 import me.schlaubi.votebot.core.command.CommandManager;
 import me.schlaubi.votebot.core.entities.Guild;
@@ -62,6 +64,8 @@ public class VoteBot implements Closeable {
     private final boolean debug;
     @Getter
     private final TranslationManager translationManager;
+    @Getter
+    private final VoteManager voteManager;
 
     public VoteBot(Cassandra databaseConnection, Configuration configuration, boolean debug) {
         instance = this;
@@ -74,6 +78,7 @@ public class VoteBot implements Closeable {
         guildCache = new Cache<>(Guild.class, Guild.GuildProvider.class, databaseConnection);
         userCache = new Cache<>(User.class, User.UserProvider.class, databaseConnection);
         translationManager = new TranslationManager();
+        voteManager = new VoteManager(this);
         commandManager = new CommandManager(debug ? configuration.getString("prefixes.debug") : configuration.getString("prefixes.default"), this);
         initializeShardManager();
         registerCommands();
@@ -123,7 +128,8 @@ public class VoteBot implements Closeable {
         commandManager.registerCommands(
                 new HelpCommand(),
                 new PrefixCommand(),
-                new LanguageCommand()
+                new LanguageCommand(),
+                new CreateCommand()
         );
     }
 
