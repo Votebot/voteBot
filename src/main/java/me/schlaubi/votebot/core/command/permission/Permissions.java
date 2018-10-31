@@ -8,11 +8,13 @@ public interface Permissions {
 
     boolean isCovered(UserPermissions userPermissions, Guild guild);
 
+    String getIdentifier();
+
     static Permissions ownerOnly() {
         return new OwnerOnlyPermissions();
     }
 
-    static Permissions adminOwnly() {
+    static Permissions adminOnly() {
         return new AdminOnlyPermissions();
     }
 

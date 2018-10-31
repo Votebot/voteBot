@@ -30,10 +30,12 @@ public class CreateCommand extends Command {
             return send(error(event.translate("command.create.alreadycreated.title"), event.translate("command.create.alreadycreated.description")));
         String heading = voteArgs[0];
         List<String> options = Arrays.asList(voteArgs).subList(1, voteArgs.length);
-        if (options.size() < 1)
-            return send(error(event.translate("command.create.tolessoptions.title"), event.translate("command.create.tolessoptions.description")));
         //Look for dupes
         options = options.stream().distinct().collect(Collectors.toList());
+        if (options.size() <= 1)
+            return send(error(event.translate("command.create.tolessoptions.title"), event.translate("command.create.tolessoptions.description")));
+        if (options.size() > 10)
+            return send(error(event.translate("command.create.tomanyoptions.title"), event.translate("command.create.tomanyoptions.description")));
         //Create random emotes
         ThreadLocalRandom generator = ThreadLocalRandom.current();
         List<String> availableEmote = new ArrayList<>(Arrays.asList(Misc.EMOTES));

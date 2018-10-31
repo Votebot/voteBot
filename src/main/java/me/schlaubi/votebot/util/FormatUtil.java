@@ -8,7 +8,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FormatUtil extends EmbedUtil{
 
@@ -37,9 +36,9 @@ public class FormatUtil extends EmbedUtil{
     private static String buildUsage(Command command) {
         if (command instanceof SubCommand) {
             SubCommand subCommand = ((SubCommand) command);
-            return "g!" + subCommand.getMainCommand().getName() + " " + subCommand.getName() + " " + subCommand.getUsage() + " - " + subCommand.getDescription();
+            return "v!" + subCommand.getMainCommand().getName() + " " + subCommand.getName() + " " + subCommand.getUsage() + " - " + subCommand.getDescription();
         }
-        return "g!" + command.getName() + " " + command.getUsage();
+        return "v!" + command.getName() + " " + command.getUsage();
     }
 
     public static String formatLocales(List<TranslationLocale> locales) {

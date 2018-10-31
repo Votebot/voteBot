@@ -10,8 +10,8 @@ import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
-@SuppressWarnings("unsused")
 @Log4j2
+@SuppressWarnings("unused")
 public class CommandLogger {
 
     @SubscribeEvent
@@ -31,8 +31,9 @@ public class CommandLogger {
 
     @SubscribeEvent
     private void onPermissionViolations(CommandPermissionViolationEvent noPermissionEvent) {
-        String permission = noPermissionEvent.getCommand().getPermissions().toString();
+        String permission = noPermissionEvent.getCommand().getPermissions().getIdentifier();
         EmbedBuilder builder = EmbedUtil.error(noPermissionEvent.translate("phrases.nopermission.title"), noPermissionEvent.translate(String.format("phrases.nopermission.%s", permission)));
         SafeMessage.sendMessage(noPermissionEvent.getChannel(), builder);
     }
 }
+

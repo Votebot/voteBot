@@ -65,7 +65,7 @@ public class CommandManager implements Closeable {
             if (content.startsWith(mention))
                 prefix = mention;
             else {
-                String customPrefix = bot.getGuildCache().get(event.getGuild().getIdLong()).getPrefix();
+                String customPrefix = bot.getGuildCache().get(event.getGuild()).getPrefix();
                 if (content.startsWith(customPrefix))
                     prefix = customPrefix;
             }

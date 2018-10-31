@@ -12,11 +12,11 @@ import me.schlaubi.votebot.core.graphics.PieChart;
 import me.schlaubi.votebot.core.graphics.PieTile;
 import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.MessageBuilder;
-import org.knowm.xchart.style.Styler;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class CloseCommand extends Command {
                 if (!manager.getCache().isPollMessage(pollMessageId))
                     return send(error(event.translate("command.close.novoteid.title"), event.translate("command.close.novoteid.description")));
                 target = manager.getCache().getVote(pollMessageId);
-                if (target.getAuthorId() != event.getAuthor().getIdLong() && !Permissions.adminOwnly().isCovered(event.getUserPermissions(), event.getGuild()))
+                if (target.getAuthorId() != event.getAuthor().getIdLong() && !Permissions.adminOnly().isCovered(event.getUserPermissions(), event.getGuild()))
                     return send(error(event.translate("command.close.nopermission.title"), event.translate("command.close.nopermission.description")));
             } catch (NumberFormatException e) {
                 return send(error(event.translate("command.close.invalidnumber.title"), event.translate("command.close.invalidnumber.description")));
@@ -53,12 +53,11 @@ public class CloseCommand extends Command {
         var allVotes = target.getUserVotes().size();
         if (target.getUserVotes().isEmpty())
             return send("No votes");
-        target.getAnswers().forEach((option, answers) -> tiles.add(new PieTile(option, ((double) answers / allVotes))));
+        target.getAnswers().forEach((option, answers) -> tiles.add(new PieTile(option, Double.parseDouble(new DecimalFormat("##.#").format(((double) answers / allVotes) * 100).replace(",", ".")))));
         try {
             PieChart chart = new PieChart(target.getHeading(), tiles.toArray(new PieTile[0]));
-            File chartFile = chart.encode();
+            InputStream chartFile = chart.toInputStream();
             SafeMessage.sendFile(event.getChannel(), new MessageBuilder().setContent(event.translate("command.close.finished")).build(), chartFile);
-            chartFile.delete();
         } catch (IOException | FontFormatException e) {
             log.warn("[ChartGenerator] Error while closing chart", e);
             return send(error(event.translate("command.close.unknownerror.title"), event.translate("command.close.unknownerror.description")));

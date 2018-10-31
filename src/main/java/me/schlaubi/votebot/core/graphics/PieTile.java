@@ -10,6 +10,7 @@ public class PieTile {
 
     public PieTile(String tile, double percentage) {
         this.percentage = percentage;
-        this.tile = tile + " - " + (percentage * 100) + "%";
+        var name =  tile.length() >= 10 ? tile.substring(0, 10) + "..." : tile;
+        this.tile = name + " - " + percentage + "%";
     }
 }

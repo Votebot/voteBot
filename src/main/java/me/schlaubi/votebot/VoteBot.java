@@ -3,6 +3,7 @@ package me.schlaubi.votebot;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import me.schlaubi.votebot.commands.general.ChartCommand;
 import me.schlaubi.votebot.commands.general.HelpCommand;
 import me.schlaubi.votebot.commands.settings.LanguageCommand;
 import me.schlaubi.votebot.commands.settings.PrefixCommand;
@@ -135,7 +136,8 @@ public class VoteBot implements Closeable {
                 new InfoCommand(),
                 new AddOptionCommand(),
                 new ChangeHeadingCommand(),
-                new RemoveOptionCommand()
+                new RemoveOptionCommand(),
+                new ChartCommand()
         );
     }
 

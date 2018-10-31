@@ -10,4 +10,9 @@ public class AdminOnlyPermissions implements Permissions {
     public boolean isCovered(UserPermissions userPermissions, Guild guild) {
         return guild.getMemberById(userPermissions.getUserId()).hasPermission(Permission.MANAGE_SERVER);
     }
+
+    @Override
+    public String getIdentifier() {
+        return "admin";
+    }
 }

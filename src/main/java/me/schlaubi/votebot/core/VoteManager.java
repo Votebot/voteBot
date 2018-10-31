@@ -15,10 +15,8 @@ public class VoteManager {
 
     @Getter
     private final VoteCache cache;
-    private final VoteBot bot;
 
     public VoteManager(VoteBot bot) {
-        this.bot = bot;
         this.cache = new VoteCache(bot);
     }
 

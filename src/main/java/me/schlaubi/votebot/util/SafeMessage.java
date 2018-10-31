@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.requests.restaction.MessageAction;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
@@ -68,7 +68,7 @@ public class SafeMessage {
         return getAction(channel, buildMessage(embedBuilder)).complete();
     }
 
-    public static void sendFile(TextChannel channel, Message message, File image) {
+    public static void sendFile(TextChannel channel, Message message, InputStream image) {
         if (hasFilePermissions(channel))
             channel.sendFile(image, "file.png", message).queue();
     }

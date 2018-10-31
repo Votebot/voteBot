@@ -26,7 +26,7 @@ public class GameAnimator implements Runnable {
         List<Game> gameList = new ArrayList<>();
         config.getStringList("games").forEach(gameRaw -> {
             String[] gameSplitted = gameRaw.split(": ");
-            gameList.add(Game.of(Game.GameType.fromKey(Integer.parseInt(gameSplitted[0])), gameSplitted[1]));
+            gameList.add(Game.of(Game.GameType.fromKey(Integer.parseInt(gameSplitted[0])), formatGame(gameSplitted[1])));
         });
         this.games = gameList.toArray(new Game[0]);
         this.scheduler = Executors.newSingleThreadScheduledExecutor(new NameThreadFactory("GameAnimator"));

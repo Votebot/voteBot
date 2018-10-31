@@ -6,4 +6,9 @@ public class EveryonePermissions implements Permissions {
     public boolean isCovered(UserPermissions userPermissions, net.dv8tion.jda.core.entities.Guild guild) {
         return true;
     }
+
+    @Override
+    public String getIdentifier() {
+        return "everyone";
+    }
 }

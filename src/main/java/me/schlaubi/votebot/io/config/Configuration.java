@@ -1,6 +1,5 @@
 package me.schlaubi.votebot.io.config;
 
-import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.simpleyaml.configuration.file.YamlFile;
 import org.simpleyaml.exceptions.InvalidConfigurationException;
@@ -33,7 +32,4 @@ public class Configuration extends YamlFile {
         log.info("[Configuration] Loaded config");
     }
 
-    private void setDefault(@NonNull YamlFile config) {
-        config.addDefault("bot", "tokenheyhey");
-    }
 }

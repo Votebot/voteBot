@@ -28,6 +28,8 @@ public class AddOptionCommand extends Command {
             return send(error(event.translate("command.close.novote.title"), event.translate("command.close.novote.description")));
         Vote vote = manager.getVote(event.getMember());
         String option = event.getArguments();
+        if (vote.getAnswers().size() >= 10)
+            return send(error(event.translate("command.create.tomanyoptions.title"), event.translate("command.create.tomanyoptions.description")));
         if (vote.getAnswers().containsKey(option))
             return send(error(event.translate("command.addoption.duplication.title"), event.translate("command.addoption.duplication.description")));
         //Find emote
