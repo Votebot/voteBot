@@ -79,6 +79,12 @@ public class Vote extends DatabaseEntity<Vote> {
         save();
     }
 
+    @Transient
+    public void changeHeading(String heading) {
+        this.heading = heading;
+        save();
+    }
+
     @Accessor
     public interface VoteProvider {
 
@@ -95,14 +101,14 @@ public class Vote extends DatabaseEntity<Vote> {
         return vote.getAuthorId() == authorId && vote.getGuildId() == guildId;
     }
 
-    private void save() {
+    public void save() {
         VoteBot.getInstance().getVoteManager().getCache().update(this);
     }
 
-    public EmbedBuilder buildEmbed() {
+    public EmbedBuilder buildEmbed(long messageId) {
         EmbedBuilder builder = new EmbedBuilder()
                 .setColor(Colors.BLURPLE)
-                .setAuthor(getMember().getUser().getName(), "https://votebot.schlaubi.me/vote/view/soon", getMember().getUser().getAvatarUrl())
+                .setAuthor(getMember().getUser().getName(), "https://votebot.schlaubi.me/vote/view/" + messageId, getMember().getUser().getAvatarUrl())
                 .setFooter("React to vote", null)
                 .setTimestamp(Instant.now())
                 .setTitle(heading);
@@ -142,7 +148,7 @@ public class Vote extends DatabaseEntity<Vote> {
 
 
     public void updateMessages() {
-        executor.execute(() -> crawlMessages().forEach(message -> message.editMessage(buildEmbed().build()).queue()));
+        executor.execute(() -> crawlMessages().forEach(message -> message.editMessage(buildEmbed(message.getIdLong()).build()).queue()));
     }
 
     public Guild getGuild() {
@@ -157,7 +163,7 @@ public class Vote extends DatabaseEntity<Vote> {
         return member;
     }
 
-    private List<Message> crawlMessages() {
+    public List<Message> crawlMessages() {
         List<Message> out = new ArrayList<>();
         messages.forEach((messageId, channelId) -> {
             TextChannel channel = getGuild().getTextChannelById(channelId);

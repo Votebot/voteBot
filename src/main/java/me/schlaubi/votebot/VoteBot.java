@@ -6,9 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import me.schlaubi.votebot.commands.general.HelpCommand;
 import me.schlaubi.votebot.commands.settings.LanguageCommand;
 import me.schlaubi.votebot.commands.settings.PrefixCommand;
-import me.schlaubi.votebot.commands.vote.CloseCommand;
-import me.schlaubi.votebot.commands.vote.CreateCommand;
-import me.schlaubi.votebot.commands.vote.InfoCommand;
+import me.schlaubi.votebot.commands.vote.*;
 import me.schlaubi.votebot.core.GameAnimator;
 import me.schlaubi.votebot.core.VoteExecutor;
 import me.schlaubi.votebot.core.VoteManager;
@@ -134,7 +132,10 @@ public class VoteBot implements Closeable {
                 new LanguageCommand(),
                 new CreateCommand(),
                 new CloseCommand(),
-                new InfoCommand()
+                new InfoCommand(),
+                new AddOptionCommand(),
+                new ChangeHeadingCommand(),
+                new RemoveOptionCommand()
         );
     }
 

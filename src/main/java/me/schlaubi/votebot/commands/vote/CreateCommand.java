@@ -47,7 +47,7 @@ public class CreateCommand extends Command {
         Message voteMessage = sendMessageBlocking(event.getChannel(), info("Creating ...", "Please wait while the vote is beeing created "));
         Vote vote = manager.createVote(event.getMember(), heading, options, emotes, voteMessage);
         vote.addEmotes(voteMessage);
-        voteMessage.editMessage(vote.buildEmbed().build()).queue();
+        voteMessage.editMessage(vote.buildEmbed(voteMessage.getIdLong()).build()).queue();
         return send(success(event.translate("command.create.created.title"), event.translate("command.create.created.description")));
     }
 }
