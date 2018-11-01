@@ -47,7 +47,40 @@ a {
 .vote-heading {
     font-size: 50px;
     text-align: center;
-    margin: 50px;
+}
+
+.user {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    background: var(--darker);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 10px 0 30px 0;
+}
+
+.user .avatar {
+    height: 50px;
+    width: auto;
+    border-radius: 100%;
+    margin-right: 15px;
+}
+
+.user .user-info {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.user .user-info .user-text {
+    font-size: 22px;
+}
+
+.user .user-info .user-id {
+    font-size: 12px;
+    opacity: 0.5;
 }
 
 .results {
