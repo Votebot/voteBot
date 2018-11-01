@@ -13,7 +13,7 @@ import java.util.Locale;
 public class LanguageCommand extends Command {
 
     public LanguageCommand() {
-        super(new String[]{"language", "language", "lang", "locale", "locales", "loc"}, CommandCategory.GENERAL, Permissions.everyone(), "Lets you set your language", "[language-tag]");
+        super(new String[]{"language", "lang", "locale", "locales", "loc"}, CommandCategory.GENERAL, Permissions.everyone(), "Lets you set your language", "[language-tag]");
     }
 
     @Override

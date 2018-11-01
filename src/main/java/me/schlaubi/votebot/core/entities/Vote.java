@@ -180,6 +180,6 @@ public class Vote extends DatabaseEntity<Vote> {
     public boolean isPermitted(User user) {
         if (!voteCounts.containsKey(user.getIdLong()))
             return true;
-        return voteCounts.get(user.getIdLong()) <= 3;
+        return voteCounts.get(user.getIdLong()) <= 2;
     }
 }
