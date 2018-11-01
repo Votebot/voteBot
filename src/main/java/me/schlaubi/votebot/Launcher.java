@@ -1,6 +1,7 @@
 package me.schlaubi.votebot;
 
 import lombok.extern.log4j.Log4j2;
+import me.schlaubi.votebot.io.FileDownloader;
 import me.schlaubi.votebot.io.config.Configuration;
 import me.schlaubi.votebot.io.database.Cassandra;
 import org.apache.logging.log4j.Level;
@@ -9,11 +10,12 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Log4j2
 public class Launcher {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         Configurator.setRootLevel(args.length == 0 ? Level.INFO : Level.toLevel(args[0], Level.INFO));
         Configurator.initialize(ClassLoader.getSystemClassLoader(), new ConfigurationSource(ClassLoader.getSystemResourceAsStream("log4j2.xml")));
         log.info("[Launcher] VoteBot is launching ...");
@@ -25,6 +27,8 @@ public class Launcher {
             log.fatal("[Database] An error occurred while connecting to the database", e);
             System.exit(1);
         }
+        //Download needed files
+        new FileDownloader().downloadFiles();
         new VoteBot(databaseConnection, configuration, String.join(" ", args).contains("debug"));
     }
 }

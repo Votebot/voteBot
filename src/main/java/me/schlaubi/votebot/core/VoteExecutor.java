@@ -7,10 +7,12 @@ import me.schlaubi.votebot.util.NameThreadFactory;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageReaction;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,6 +62,20 @@ public class VoteExecutor {
         }
         vote.vote(vote.getEmotes().get(emoteName), user);
         vote.updateMessages();
+    }
+
+    @SubscribeEvent
+    private void onMessageDeletion(GuildMessageDeleteEvent event) {
+        var messageId = event.getMessageIdLong();
+        if (!cache.isPollMessage(messageId))
+            return;
+        Vote vote = cache.getVote(messageId);
+        final Map<Long, Long> messages = vote.getMessages();
+        messages.remove(messageId);
+        if (messages.isEmpty())
+            vote.close();
+        else
+            vote.save();
     }
 
 

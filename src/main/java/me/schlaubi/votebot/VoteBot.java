@@ -3,6 +3,7 @@ package me.schlaubi.votebot;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import me.schlaubi.votebot.commands.general.AboutCommand;
 import me.schlaubi.votebot.commands.general.ChartCommand;
 import me.schlaubi.votebot.commands.general.HelpCommand;
 import me.schlaubi.votebot.commands.settings.LanguageCommand;
@@ -16,6 +17,7 @@ import me.schlaubi.votebot.core.command.CommandManager;
 import me.schlaubi.votebot.core.entities.Guild;
 import me.schlaubi.votebot.core.entities.User;
 import me.schlaubi.votebot.core.events.AllShardsLoadedEvent;
+import me.schlaubi.votebot.core.statistics.ServerCountStatistics;
 import me.schlaubi.votebot.core.translation.TranslationManager;
 import me.schlaubi.votebot.io.config.Configuration;
 import me.schlaubi.votebot.io.database.Cassandra;
@@ -67,6 +69,7 @@ public class VoteBot implements Closeable {
     private final TranslationManager translationManager;
     @Getter
     private final VoteManager voteManager;
+    private final ServerCountStatistics serverCountPoster;
 
     public VoteBot(Cassandra databaseConnection, Configuration configuration, boolean debug) {
         instance = this;
@@ -82,6 +85,7 @@ public class VoteBot implements Closeable {
         voteManager = new VoteManager(this);
         commandManager = new CommandManager(debug ? configuration.getString("prefixes.debug") : configuration.getString("prefixes.default"), this);
         initializeShardManager();
+        serverCountPoster = new ServerCountStatistics(shardManager, configuration);
         registerCommands();
     }
 
@@ -137,7 +141,8 @@ public class VoteBot implements Closeable {
                 new AddOptionCommand(),
                 new ChangeHeadingCommand(),
                 new RemoveOptionCommand(),
-                new ChartCommand()
+                new ChartCommand(),
+                new AboutCommand()
         );
     }
 
@@ -155,5 +160,6 @@ public class VoteBot implements Closeable {
     private void onReady(AllShardsLoadedEvent event) {
         allShardsInitialized = true;
         new GameAnimator(shardManager, configuration);
+        serverCountPoster.start();
     }
 }
