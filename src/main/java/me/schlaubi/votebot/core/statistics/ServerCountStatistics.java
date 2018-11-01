@@ -37,7 +37,7 @@ public class ServerCountStatistics {
     }
 
     public synchronized void start() {
-        scheduler.scheduleAtFixedRate(this::post, 0, 5, TimeUnit.MINUTES);
+        //scheduler.scheduleAtFixedRate(this::post, 0, 5, TimeUnit.MINUTES);
     }
 
     private void post() {
