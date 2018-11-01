@@ -47,7 +47,7 @@ public class Cassandra implements Closeable {
                 "  vote_counts map<bigint, int>,\n" +
                 "  PRIMARY KEY (guild_id, author_id)\n" +
                 ")");
-        defaults.add(() -> "CREATE INDEX messageKey ON votes(KEYS(messages));");
+        defaults.add(() -> "CREATE INDEX IF NOT EXISTS messageKey ON votes(KEYS(messages));");
         defaults.add(() -> "CREATE TABLE IF NOT EXISTS users(\n" +
                 "  id bigint PRIMARY KEY,\n" +
                 "  \"language\" text\n" +

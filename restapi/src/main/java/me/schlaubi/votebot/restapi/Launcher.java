@@ -7,6 +7,7 @@ import me.schlaubi.votebot.restapi.io.config.Configuration;
 import me.schlaubi.votebot.restapi.io.database.Cassandra;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
 
