@@ -8,14 +8,21 @@
 <body>
 <div class="wrapper">
     <h1 class="vote-heading"><%= voteHeading %></h1>
+    <div class="user">
+        <img class="avatar" src="<%= user.avatar %>">
+        <div class="user-info">
+            <p class="user-text"><%= user.name %>#<%= user.discriminator %></p>
+            <p class="user-id"><%= user.id %></p>
+        </div>
+    </div>
     <div class="results">
         <ul>
             <% votes.forEach(vote => { %>
-            <li>
-                <p><%= vote.emote %></p>
-                <p><%= vote.name %></p>
-                <p>[<%= vote.count %>]</p>
-            </li>
+                <li>
+                    <p><%= vote.emote %></p>
+                    <p><%= vote.name %></p>
+                    <p>[<%= vote.count %>]</p>
+                </li>
             <% }); %>
         </ul>
     </div>
@@ -23,13 +30,16 @@
         <canvas class="pie" id="chart"></canvas>
     </div>
     <div class="info">
-        <p>© VoteBot. All rights reserved. Made by Rxsto#4224</p>
+        <p>© VoteBot. All rights reserved. Made by <a href="https://rxsto.me" target="_blank">Rxsto#4224</a></p>
     </div>
 </div>
 <script src="/js/chart.js"></script>
 <script>
     Chart.defaults.global.defaultFontFamily = "ProductSans";
     Chart.defaults.global.defaultFontSize = 20;
+    Chart.defaults.global.defaultFontColor = '#2C2F33'
+    Chart.defaults.pie.animation.animateScale = true;
+    Chart.defaults.pie.rotation = 0.5 * Math.PI;
     let preColors = ["#7289DA", "#ff6b6b", "#ff906a", "#f7f56c", "#b6f76c", "#6cf798", "#6cf2f7", "#6ca8f7", "#9e6cf7", "#f87cff"];
     let ctx = document.getElementById("chart").getContext('2d');
     let labels = [];
