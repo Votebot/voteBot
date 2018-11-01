@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= voteTitle %></title>
+    <link rel='stylesheet' href='/css/libs/reset.css'/>
+    <link rel='stylesheet' href='/css/style.css'/>
+</head>
+<body>
+<div class="wrapper">
+    <h1 class="vote-heading"><%= voteHeading %></h1>
+    <div class="results">
+        <ul>
+            <% votes.forEach(vote => { %>
+            <li>
+                <p><%= vote.emote %></p>
+                <p><%= vote.name %></p>
+                <p>[<%= vote.count %>]</p>
+            </li>
+            <% }); %>
+        </ul>
+    </div>
+    <div class="pie-wrapper">
+        <canvas class="pie" id="chart"></canvas>
+    </div>
+    <div class="info">
+        <p>© VoteBot. All rights reserved. Made by Rxsto#4224</p>
+    </div>
+</div>
+<script src="/js/chart.js"></script>
+<script>
+    Chart.defaults.global.defaultFontFamily = "ProductSans";
+    Chart.defaults.global.defaultFontSize = 20;
+    let preColors = ["#7289DA", "#ff6b6b", "#ff906a", "#f7f56c", "#b6f76c", "#6cf798", "#6cf2f7", "#6ca8f7", "#9e6cf7", "#f87cff"];
+    let ctx = document.getElementById("chart").getContext('2d');
+    let labels = [];
+    <%
+    votes.forEach(vote => { %>
+    labels.push('<%= vote.name %>');
+    <%
+    });
+    %>
+    let counts = [];
+    <%
+    votes.forEach(vote => { %>
+    counts.push('<%= vote.count %>');
+    <%
+    });
+    %>
+    let colors = [];
+    let colorsCount = 0;
+    <%
+    votes.forEach(vote => { %>
+    colors.push(preColors[colorsCount]);
+    colorsCount++;
+    <%
+    });
+    %>
+    let chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: counts,
+                backgroundColor: colors
+            }],
+        },
+        options: {
+            labels: {
+                defaultFontFamily: "'Product Sans', sans-serif"
+            }
+        }
+    });
+</script>
+</body>
+</html>
