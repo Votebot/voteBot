@@ -9,6 +9,7 @@ import me.schlaubi.votebot.io.database.DatabaseEntity;
 import me.schlaubi.votebot.util.Colors;
 import me.schlaubi.votebot.util.Misc;
 import me.schlaubi.votebot.util.NameThreadFactory;
+import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.*;
@@ -30,6 +31,10 @@ public class Vote extends DatabaseEntity<Vote> {
 
     @Transient
     private static ExecutorService executor = Executors.newCachedThreadPool(new NameThreadFactory("VoteMessageUpdater"));
+    @Transient
+    private Guild guild;
+    @Transient
+    private Member member;
 
     @PartitionKey
     @Column(name = "guild_id")
@@ -38,28 +43,29 @@ public class Vote extends DatabaseEntity<Vote> {
     @Column(name = "author_id")
     private long authorId;
     private String heading;
-    private Map<String, Integer> answers;
+    private List<String> options;
+    /*          userId voteId */
     @Column(name = "user_votes")
-    private Map<Long, String> userVotes = new HashMap<>();
-    private Map<String, String> emotes;
+    private Map<Long, Integer> userVotes = new HashMap<>();
+    /*          unicode voteId */
+    private Map<String, Integer> emotes;
+    /*          messageId textChannelId */
     private Map<Long, Long> messages;
     @Column(name = "vote_counts")
+    /*          userId amount of votes*/
     private Map<Long, Integer> voteCounts = new HashMap<>();
-    @Transient
-    private Guild guild = null;
-    @Transient
-    private Member member;
+
 
     public Vote() {
         super(Vote.class, VoteBot.getInstance().getDatabaseConnection(), "[VOTE]");
     }
 
-    public Vote(long guildId, long authorId, String heading, Map<String, Integer> answers, Map<String, String> emotes, Map<Long, Long> messages) {
+    public Vote(long guildId, long authorId, String heading, List<String> options, Map<String, Integer> emotes, Map<Long, Long> messages) {
         super(Vote.class, VoteBot.getInstance().getDatabaseConnection(), "[VOTE]");
         this.guildId = guildId;
         this.authorId = authorId;
         this.heading = heading;
-        this.answers = answers;
+        this.options = options;
         this.emotes = emotes;
         this.messages = messages;
         save(this);
@@ -113,42 +119,35 @@ public class Vote extends DatabaseEntity<Vote> {
                 .setTimestamp(Instant.now())
                 .setTitle(heading);
         StringBuilder answersBuilder = new StringBuilder();
-        AtomicInteger count = new AtomicInteger(1);
-        answers.forEach((option, votes) -> answersBuilder.append("**").append(count.getAndAdd(1)).append("**").append(". ").append(Misc.getValueByKey(emotes, option)).append(" - ").append(option).append(": `").append(votes).append("`").append(System.lineSeparator()));
+        AtomicInteger count = new AtomicInteger();
+        options.forEach(option -> {
+                    long voteCount = getVoteCountById(count.get());
+                    answersBuilder.append("**").append(count.get() + 1).append("**").append(". ").append(Misc.getValueByKey(emotes, count.get())).append(" - ").append(option).append(": `").append(voteCount).append("`").append(System.lineSeparator());
+                    count.incrementAndGet();
+                }
+        );
         builder.setDescription(answersBuilder.toString());
         return builder;
     }
 
-    public void vote(String option, User user) {
-        if (!voteCounts.containsKey(user.getIdLong())) {
-            voteUp(option, user, true);
-            voteCounts.put(user.getIdLong(), 1);
-        } else {
-            //Get oldOption
-            var oldOption = userVotes.get(user.getIdLong());
-            var oldOptionVoteCount = answers.get(oldOption);
-            oldOptionVoteCount = oldOptionVoteCount - 1;
-            //Decrease old option
-            answers.replace(oldOption, oldOptionVoteCount);
-            userVotes.replace(user.getIdLong(), option);
-            //Increase new option
-            voteUp(option, user, false);
-            voteCounts.put(user.getIdLong(), (voteCounts.get(user.getIdLong()) + 1));
+    public void vote(Integer voteId, User user) {
+        long userId = user.getIdLong();
+        int voteCount = 0;
+        if (userVotes.containsKey(userId)) {
+            userVotes.remove(userId);
+            if (voteCounts.containsKey(userId)) {
+                voteCount = voteCounts.get(userId);
+                voteCounts.remove(userId);
+            }
         }
+        voteCount++;
+        voteCounts.put(userId, voteCount);
+        userVotes.put(userId, voteId);
         save();
     }
 
-    private void voteUp(String option, User user, boolean first) {
-        var currentVotes = answers.get(option);
-        currentVotes = currentVotes + 1;
-        answers.replace(option, currentVotes);
-        if (first)
-            userVotes.put(user.getIdLong(), option);
-    }
-
-
     public void updateMessages() {
-        executor.execute(() -> crawlMessages().forEach(message -> message.editMessage(buildEmbed(message.getIdLong()).build()).queue()));
+        executor.execute(() -> crawlMessages().forEach(message -> SafeMessage.editMessage(message, buildEmbed(message.getIdLong()))));
     }
 
     public Guild getGuild() {
@@ -181,5 +180,9 @@ public class Vote extends DatabaseEntity<Vote> {
         if (!voteCounts.containsKey(user.getIdLong()))
             return true;
         return voteCounts.get(user.getIdLong()) <= 2;
+    }
+
+    public long getVoteCountById(Integer voteId) {
+        return userVotes.entrySet().stream().filter(entry -> entry.getValue().equals(voteId)).count();
     }
 }

@@ -8,6 +8,7 @@ import me.schlaubi.votebot.core.command.Result;
 import me.schlaubi.votebot.core.command.permission.Permissions;
 import me.schlaubi.votebot.core.entities.Vote;
 import me.schlaubi.votebot.util.Misc;
+import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.entities.Message;
 
 import java.util.*;
@@ -30,8 +31,8 @@ public class CreateCommand extends Command {
             return send(error(event.translate("command.create.alreadycreated.title"), event.translate("command.create.alreadycreated.description")));
         String heading = voteArgs[0];
         List<String> options = Arrays.asList(voteArgs).subList(1, voteArgs.length);
-        //Look for dupes
-        options = options.stream().distinct().collect(Collectors.toList());
+        //Look for invalid thingies
+        options = options.stream().filter(option -> !option.equals("")).collect(Collectors.toList());
         if (options.size() <= 1)
             return send(error(event.translate("command.create.tolessoptions.title"), event.translate("command.create.tolessoptions.description")));
         if (options.size() > 10)
@@ -39,17 +40,19 @@ public class CreateCommand extends Command {
         //Create random emotes
         ThreadLocalRandom generator = ThreadLocalRandom.current();
         List<String> availableEmote = new ArrayList<>(Arrays.asList(Misc.EMOTES));
-        Map<String, String> emotes = new HashMap<>();
-        for (String option : options) {
+        Map<String, Integer> emotes = new HashMap<>();
+        int voteIdCounter = 0;
+        for (String ignored : options) {
             int index = generator.nextInt(availableEmote.size());
             String emote = availableEmote.get(index);
             availableEmote.remove(index);
-            emotes.put(emote, option);
+            emotes.put(emote, voteIdCounter);
+            voteIdCounter++;
         }
         Message voteMessage = sendMessageBlocking(event.getChannel(), info("Creating ...", "Please wait while the vote is beeing created "));
         Vote vote = manager.createVote(event.getMember(), heading, options, emotes, voteMessage);
         vote.addEmotes(voteMessage);
-        voteMessage.editMessage(vote.buildEmbed(voteMessage.getIdLong()).build()).queue();
+        SafeMessage.editMessage(voteMessage, vote.buildEmbed(voteMessage.getIdLong()));
         return send(success(event.translate("command.create.created.title"), event.translate("command.create.created.description")));
     }
 }

@@ -53,11 +53,17 @@ public class CloseCommand extends Command {
         var allVotes = target.getUserVotes().size();
         if (target.getUserVotes().isEmpty())
             return send("No votes");
-        target.getAnswers().forEach((option, answers) -> tiles.add(new PieTile(option, Double.parseDouble(new DecimalFormat("##.#").format(((double) answers / allVotes) * 100).replace(",", ".")))));
+        target.getOptions().forEach((option) -> {
+            int voteId = target.getOptions().indexOf(option);
+            long voteCount = target.getVoteCountById(voteId);
+            tiles.add(new PieTile(option, Double.parseDouble(new DecimalFormat("##.#").format(((double) voteCount / allVotes) * 100).replace(",", "."))));
+        });
         try {
             PieChart chart = new PieChart(target.getHeading(), tiles.toArray(new PieTile[0]));
             InputStream chartFile = chart.toInputStream();
             SafeMessage.sendFile(event.getChannel(), new MessageBuilder().setContent(event.translate("command.close.finished")).build(), chartFile);
+        } catch (IllegalArgumentException e) {
+          return send(error(event.translate("command.close.dupes.title"), event.translate("command.close.dupes.description")));
         } catch (IOException | FontFormatException e) {
             log.warn("[ChartGenerator] Error while closing chart", e);
             return send(error(event.translate("command.close.unknownerror.title"), event.translate("command.close.unknownerror.description")));

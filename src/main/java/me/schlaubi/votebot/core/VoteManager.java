@@ -20,12 +20,10 @@ public class VoteManager {
         this.cache = new VoteCache(bot);
     }
 
-    public Vote createVote(Member author, String heading, List<String> options, Map<String, String> emotes, Message initialMessage) {
+    public Vote createVote(Member author, String heading, List<String> options, Map<String, Integer> emotes, Message initialMessage) {
         Map<Long, Long> messages = new HashMap<>();
         messages.put(initialMessage.getIdLong(), initialMessage.getTextChannel().getIdLong());
-        Map<String, Integer> answers = new HashMap<>();
-        options.stream().distinct().forEach(option -> answers.put(option, 0));
-        Vote vote = new Vote(author.getGuild().getIdLong(), author.getUser().getIdLong(), heading, answers, emotes, messages);
+        Vote vote = new Vote(author.getGuild().getIdLong(), author.getUser().getIdLong(), heading, options, emotes, messages);
         cache.add(vote);
         return vote;
     }

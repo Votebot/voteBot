@@ -7,6 +7,7 @@ import me.schlaubi.votebot.core.command.CommandEvent;
 import me.schlaubi.votebot.core.command.Result;
 import me.schlaubi.votebot.core.command.permission.Permissions;
 import me.schlaubi.votebot.core.entities.Vote;
+import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.entities.Message;
 
 public class InfoCommand extends Command {
@@ -24,7 +25,7 @@ public class InfoCommand extends Command {
         Message message = sendMessageBlocking(event.getChannel(), info(event.translate("command.info.loading.title"), event.translate("command.info.loading.description")));
         vote.addEmotes(message);
         vote.addMessage(message);
-        message.editMessage(vote.buildEmbed(message.getIdLong()).build()).queue();
+        SafeMessage.editMessage(message, vote.buildEmbed(message.getIdLong()));
         return null;
     }
 }

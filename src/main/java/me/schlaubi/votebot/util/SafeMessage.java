@@ -36,8 +36,8 @@ public class SafeMessage {
         return channel.getGuild().getOwner().getUser().openPrivateChannel().complete().sendMessage(String.format("I am unable to write on your server in channel %s", channel.getName()));
     }
 
-    public static void editMessage(Message prevoiusMessage, EmbedBuilder builder) {
-        getEditAction(prevoiusMessage, buildMessage(builder)).queue();
+    public static void editMessage(Message previousMessage, EmbedBuilder builder) {
+        getEditAction(previousMessage, buildMessage(builder)).queue();
     }
 
     public static void editMessage(Message prevoiusMessage, String content) {

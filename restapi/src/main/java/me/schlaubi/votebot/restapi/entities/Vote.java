@@ -5,6 +5,7 @@ import com.datastax.driver.mapping.annotations.*;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -19,12 +20,16 @@ public class Vote {
     @Column(name = "author_id")
     private long authorId;
     private String heading;
-    private Map<String, Integer> answers;
+    private List<String> options;
+    /*          userId voteId */
     @Column(name = "user_votes")
-    private Map<Long, String> userVotes = new HashMap<>();
-    private Map<String, String> emotes;
+    private Map<Long, Integer> userVotes = new HashMap<>();
+    /*          unicode voteId */
+    private Map<String, Integer> emotes;
+    /*          messageId textChannelId */
     private Map<Long, Long> messages;
     @Column(name = "vote_counts")
+    /*          userId amount of votes*/
     private Map<Long, Integer> voteCounts = new HashMap<>();
 
     @Accessor

@@ -36,14 +36,14 @@ public class Cassandra implements Closeable {
     }
 
     private void addDefaults(List<Database> defaults) {
-        defaults.add(() -> "CREATE TABLE IF NOT EXISTS votes (\n" +
+        defaults.add(() -> "CREATE TABLE IF NOT EXISTS votebot.votes (\n" +
                 "  guild_id bigint,\n" +
                 "  author_id bigint,\n" +
-                "  answers map<text, int>,\n" +
-                "  emotes map<text, text>,\n" +
+                "  emotes map<text, int>,\n" +
                 "  heading text,\n" +
                 "  messages map<bigint, bigint>,\n" +
-                "  user_votes map<bigint, text>,\n" +
+                "  \"options\" list<text>,\n" +
+                "  user_votes map<bigint, int>,\n" +
                 "  vote_counts map<bigint, int>,\n" +
                 "  PRIMARY KEY (guild_id, author_id)\n" +
                 ")");
