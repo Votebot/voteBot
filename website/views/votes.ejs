@@ -2,12 +2,18 @@
 <html>
 <head>
     <title><%= voteTitle %></title>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <link rel='stylesheet' href='/css/libs/reset.css'/>
     <link rel='stylesheet' href='/css/style.css'/>
+    <link rel="icon" type="icon/png" href="/img/logo.png">
 </head>
 <body>
 <div class="wrapper">
-    <h1 class="vote-heading"><%= voteHeading %></h1>
     <div class="user">
         <img class="avatar" src="<%= user.avatar %>">
         <div class="user-info">
@@ -15,6 +21,7 @@
             <p class="user-id"><%= user.id %></p>
         </div>
     </div>
+    <h1 class="vote-heading"><%= voteHeading %></h1>
     <div class="results">
         <ul>
             <% votes.forEach(vote => { %>
@@ -37,12 +44,14 @@
 <script>
     Chart.defaults.global.defaultFontFamily = "ProductSans";
     Chart.defaults.global.defaultFontSize = 20;
-    Chart.defaults.global.defaultFontColor = '#2C2F33'
+    Chart.defaults.global.defaultFontColor = '#FFFFFF'
     Chart.defaults.pie.animation.animateScale = true;
     Chart.defaults.pie.rotation = 0.5 * Math.PI;
+
     let preColors = ["#7289DA", "#ff6b6b", "#ff906a", "#f7f56c", "#b6f76c", "#6cf798", "#6cf2f7", "#6ca8f7", "#9e6cf7", "#f87cff"];
     let ctx = document.getElementById("chart").getContext('2d');
     let labels = [];
+
     <%
     votes.forEach(vote => { %>
     labels.push('<%= vote.name %>');
@@ -65,6 +74,7 @@
     <%
     });
     %>
+
     let chart = new Chart(ctx, {
         type: 'pie',
         data: {

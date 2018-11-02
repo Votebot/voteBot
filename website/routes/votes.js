@@ -37,7 +37,7 @@ router.get('/:id', function (req, res) {
         let identifier = '254892085000405004'; // TODO: FIX ID
 
         superagent.get(`https://discordapp.com/api/users/${identifier}`)
-            .set('Authorization', 'Bot NTA3NjA4NTIyMzk4MTA1NjEw.DrzK9w.WCiL6OZDWwLjSFzog8wWNaolUZQ')
+            .set('Authorization', 'Bot NTA3NjA4NTIyMzk4MTA1NjEw.DrzK9w.WCiL6OZDWwLjSFzog8wWNaolUZQ') // TODO: CHANGE TOKEN
             .then(discord_data => {
                 console.log(discord_data.body);
                 obj.user.avatar = `https://cdn.discordapp.com/avatars/${identifier}/${discord_data.body.avatar}.png`;

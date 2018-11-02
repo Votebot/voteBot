@@ -12,7 +12,7 @@
     --primary: #7289DA;
     --light: #FFFFFF;
     --darker: #23272A;
-    --dark :#2C2F33;
+    --dark: #2C2F33;
     --grey: #99AAB5;
     --dsh: #F59E12;
     --patreon: #f96854;
@@ -36,17 +36,17 @@ a {
     height: 100%;
     width: 100%;
     margin: 0;
-    padding: 0;
     display: flex;
     align-content: center;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
 }
 
 .vote-heading {
     font-size: 50px;
     text-align: center;
+    margin: 15px;
 }
 
 .user {
@@ -58,7 +58,7 @@ a {
     background: var(--darker);
     padding: 20px;
     border-radius: 5px;
-    margin: 10px 0 30px 0;
+    margin: 15px;
 }
 
 .user .avatar {
@@ -84,7 +84,7 @@ a {
 }
 
 .results {
-
+    margin: 15px;
 }
 
 .results ul li {
@@ -99,18 +99,32 @@ a {
     margin: 5px;
 }
 
-.pie {
-    height: 250px;
-}
-
 .pie-wrapper {
-    background: var(--light);
-    margin: 50px;
     padding: 10px;
     border-radius: 5px;
+    margin: 15px;
+}
+
+.pie {
+    height: auto;
+    width: 450px;
 }
 
 .info p {
     font-size: 15px;
     color: var(--grey);
+}
+
+@media only screen and (max-width: 1000px) {
+    .pie {
+    height: auto;
+    width: 375px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .pie {
+        height: auto;
+        width: 325px;
+    }
 }
