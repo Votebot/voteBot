@@ -37,6 +37,7 @@ public class PieChart {
                 .theme(Styler.ChartTheme.GGPlot2);
         return builder.build();
     }
+
     private BufferedImage encode() {
         return BitmapEncoder.getBufferedImage(chart);
     }
@@ -45,8 +46,6 @@ public class PieChart {
     private void style(Styler styler) throws IOException, FontFormatException {
         var font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./fonts/Product Sans Regular.ttf"));
         var colorsList = Arrays.asList(Misc.SERIES_COLORS);
-        //randomize
-        Collections.shuffle(colorsList);
 
         styler.setChartFontColor(Colors.NOT_QUITE_BLACK)
                 .setChartTitleFont(font.deriveFont(Font.BOLD, 25))
@@ -67,7 +66,7 @@ public class PieChart {
 
     public InputStream toInputStream() throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage,"png", os);
+        ImageIO.write(bufferedImage, "png", os);
         return new ByteArrayInputStream(os.toByteArray());
     }
 }

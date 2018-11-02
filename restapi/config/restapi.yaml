@@ -1,0 +1,6 @@
+database:
+  user: votebot
+  password: password
+  keyspace: votebot
+  contactpoints:
+    - 173.212.241.148

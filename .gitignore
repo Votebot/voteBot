@@ -104,4 +104,6 @@ fabric.properties
 votebot.iml
 src/test/
 
-charts/
+/website/node_modules/
+/website/package-lock.json
+/website/bin/

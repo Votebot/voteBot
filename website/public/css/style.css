@@ -1,0 +1,130 @@
+@font-face {
+    font-family: 'ProductSansBold';
+    src: url('/fonts/Product Sans Bold.ttf');
+}
+
+@font-face {
+    font-family: 'ProductSans';
+    src: url('/fonts/Product Sans Regular.ttf');
+}
+
+:root {
+    --primary: #7289DA;
+    --light: #FFFFFF;
+    --darker: #23272A;
+    --dark: #2C2F33;
+    --grey: #99AAB5;
+    --dsh: #F59E12;
+    --patreon: #f96854;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: ProductSans, sans-serif;
+    background: var(--dark);
+    color: var(--light);
+    font-size: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary);
+}
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.vote-heading {
+    font-size: 50px;
+    text-align: center;
+    margin: 15px;
+}
+
+.user {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    background: var(--darker);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 15px;
+}
+
+.user .avatar {
+    height: 50px;
+    width: auto;
+    border-radius: 100%;
+    margin-right: 15px;
+}
+
+.user .user-info {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.user .user-info .user-text {
+    font-size: 22px;
+}
+
+.user .user-info .user-id {
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.results {
+    margin: 15px;
+}
+
+.results ul li {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+.results ul li p {
+    margin: 5px;
+}
+
+.pie-wrapper {
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px;
+}
+
+.pie {
+    height: auto;
+    width: 450px;
+}
+
+.info p {
+    font-size: 15px;
+    color: var(--grey);
+}
+
+@media only screen and (max-width: 1000px) {
+    .pie {
+    height: auto;
+    width: 375px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .pie {
+        height: auto;
+        width: 325px;
+    }
+}
