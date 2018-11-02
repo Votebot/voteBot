@@ -46,8 +46,10 @@ public class RemoveOptionCommand extends Command {
         vote.getOptions().remove(option);
         vote.getEmotes().remove(emote);
         vote.getUserVotes().entrySet().parallelStream().forEach((entry) -> {
-            if (entry.getValue().equals(voteId))
+            if (entry.getValue().equals(voteId)) {
                 vote.getUserVotes().remove(entry.getKey());
+                vote.getVoteCounts().remove(entry.getKey());
+            }
         });
         //Update reactions registrations
         vote.getEmotes().entrySet().parallelStream().filter(entry -> entry.getValue() > voteId).forEach(entry -> {
