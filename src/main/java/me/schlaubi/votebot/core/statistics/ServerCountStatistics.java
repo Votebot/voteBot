@@ -27,7 +27,8 @@ public class ServerCountStatistics {
 
     public ServerCountStatistics(ShardManager shardManager, Configuration configuration) {
         this.shardManager = shardManager;
-        this.botId = shardManager.getApplicationInfo().complete().getIdLong();
+        //this.botId = shardManager.getApplicationInfo().complete().getIdLong();
+        this.botId = 506425163706007567L;
         this.configuration = configuration;
         this.requester = new OkHttpClient.Builder()
                 .connectTimeout(3, TimeUnit.MINUTES)
@@ -45,23 +46,24 @@ public class ServerCountStatistics {
         var object = new JSONObject()
                 .put("server_count", shardManager.getGuilds().size())
                 .put("bot_id", botId)
-                .put("shards_count", shardManager.getShardsTotal())
+                .put("shard_count", shardManager.getShardsTotal())
                 .put("shards", getGuildCounts())
-                .put("botlist.space", configuration.getString("discordlists.botlist.space"))
-                .put("bots.ondiscord.xyz", configuration.getString("discordlists.bots.ondiscord.xyz"))
-                .put("discordboats.xyz", configuration.getString("discordlists.discordboats.xyz"))
-                .put("discordboats.club", configuration.getString("discordlists.discordboats.club"))
-                .put("discordbotlist.com", configuration.getString("discordlists.discordbotlist.com"))
-                .put("discordbot.world", configuration.getString("discordlists.discordbot.world"))
-                .put("bots.discord.pw", configuration.getString("discordlists.bots.discord.pw"))
-                .put("discordbotlist.xyz", configuration.getString("discordlists.discordbotlist.xyz"))
-                .put("discordbots.group", configuration.getString("discordlists.discordbots.group"))
-                .put("bots.discordlist.app", configuration.getString("discordlists.bots.discordlist.app"))
-                .put("discord.services", configuration.getString("discordlists.discord.services"))
-                .put("discordsbestbots.xyz", configuration.getString("discordlists.discordsbestbots.xyz"))
-                .put("divinediscordbots.com", configuration.getString("discordlists.divinediscordbots.com"))
-                .put("discordbots.org", configuration.getString("discordlists.discordbots.org"))
-                .put("discordbotindex.com", configuration.getString("discordlists.discordbotindex.com"))
+                .put("botlist.space", configuration.getString("botlists.botlist.space"))
+                //.put("bots.ondiscord.xyz", configuration.getString("discordlists.bots.ondiscord.xyz"))
+                //.put("discordboats.xyz", configuration.getString("discordlists.discordboats.xyz"))
+                //.put("discordboats.club", configuration.getString("discordlists.discordboats.club"))
+                //.put("discordbotlist.com", configuration.getString("discordlists.discordbotlist.com"))
+                //.put("discordbot.world", configuration.getString("discordlists.discordbot.world"))
+                //.put("bots.discord.pw", configuration.getString("discordlists.bots.discord.pw"))
+                //.put("discordbotlist.xyz", configuration.getString("discordlists.discordbotlist.xyz"))
+                //.put("discordbots.group", configuration.getString("discordlists.discordbots.group"))
+                //.put("bots.discordlist.app", configuration.getString("discordlists.bots.discordlist.app"))
+                //.put("discord.services", configuration.getString("discordlists.discord.services"))
+                //.put("discordsbestbots.xyz", configuration.getString("discordlists.discordsbestbots.xyz"))
+                //.put("divinediscordbots.com", configuration.getString("discordlists.divinediscordbots.com"))
+                .put("discordbots.org", configuration.getString("botlists.discordbots.org"))
+                //.put("discordbotindex.com", configuration.getString("discordlists.discordbotindex.com"))
+                .put("botsfordiscord.com", configuration.getString("botlists.botsfordiscord.com"))
                 ;
         var body = RequestBody.create(null, object.toString());
         var request = new Request.Builder()
@@ -74,6 +76,8 @@ public class ServerCountStatistics {
             assert response.body() != null;
             if (response.code() != 200)
                 log.warn(String.format("[ServerCount] Error while posting stats! Response: %s", response.body().string()));
+            else
+                log.debug(String.format("[ServerCount] Posted stats! Response: %s", response.body().string()));
         } catch (IOException e) {
             log.error("[ServerCount] Error while posting stats!", e);
         }
