@@ -1,10 +1,14 @@
 package me.schlaubi.votebot.util;
 
+import me.schlaubi.votebot.core.entities.Vote;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Guild;
+
 import java.awt.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Misc {
 
@@ -54,5 +58,28 @@ public class Misc {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    public static String mentionEmote(String emoteId, Guild guild) {
+        return guild.getEmoteById(emoteId).getAsMention();
+    }
+
+    private static List<String> getAvailableEmotes(Vote vote, Guild guild, int count) {
+        List<String> emotes = new LinkedList<>();
+        if (guild.getSelfMember().hasPermission(Permission.MESSAGE_EXT_EMOJI))
+            emotes.addAll(guild.getEmotes().stream().map(Emote::getId).collect(Collectors.toSet()));
+        if (emotes.size() < count)
+            Collections.addAll(emotes, EMOTES);
+        if (vote != null)
+            emotes.removeAll(vote.getEmotes().keySet());
+        return emotes;
+    }
+
+    public static List<String> getAvailableEmotes(Vote vote) {
+        return getAvailableEmotes(vote, vote.getGuild(), vote.getOptions().size());
+    }
+
+    public static List<String> getAvailableEmotes(Guild guild, int count) {
+        return getAvailableEmotes(null, guild, count);
     }
 }

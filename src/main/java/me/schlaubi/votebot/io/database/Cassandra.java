@@ -36,7 +36,7 @@ public class Cassandra implements Closeable {
     }
 
     private void addDefaults(List<Database> defaults) {
-        defaults.add(() -> "CREATE TABLE IF NOT EXISTS votebot.votes (\n" +
+        defaults.add(() -> "CREATE TABLE IF NOT EXISTS votes (\n" +
                 "  guild_id bigint,\n" +
                 "  author_id bigint,\n" +
                 "  emotes map<text, int>,\n" +

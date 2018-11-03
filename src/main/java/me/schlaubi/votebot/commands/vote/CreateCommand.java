@@ -11,7 +11,10 @@ import me.schlaubi.votebot.util.Misc;
 import me.schlaubi.votebot.util.SafeMessage;
 import net.dv8tion.jda.core.entities.Message;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -30,17 +33,17 @@ public class CreateCommand extends Command {
         if (manager.hasVote(event.getMember()))
             return send(error(event.translate("command.create.alreadycreated.title"), event.translate("command.create.alreadycreated.description")));
         String heading = voteArgs[0];
-        List<String> options = Arrays.asList(voteArgs).subList(1, voteArgs.length);
+        List<String> options = Arrays.asList(Arrays.copyOfRange(voteArgs, 1, voteArgs.length));
         //Look for invalid thingies
-        options = options.stream().filter(option -> !option.equals("")).collect(Collectors.toList());
+        options = options.stream().filter(option -> !option.isBlank()).collect(Collectors.toList());
         if (options.size() <= 1)
             return send(error(event.translate("command.create.tolessoptions.title"), event.translate("command.create.tolessoptions.description")));
         if (options.size() > 10)
             return send(error(event.translate("command.create.tomanyoptions.title"), event.translate("command.create.tomanyoptions.description")));
         //Create random emotes
         ThreadLocalRandom generator = ThreadLocalRandom.current();
-        List<String> availableEmote = new ArrayList<>(Arrays.asList(Misc.EMOTES));
-        Map<String, Integer> emotes = new HashMap<>();
+        List<String> availableEmote = Misc.getAvailableEmotes(event.getGuild(), options.size());
+        Map<String, Integer> emotes = new LinkedHashMap<>();
         int voteIdCounter = 0;
         for (String ignored : options) {
             int index = generator.nextInt(availableEmote.size());

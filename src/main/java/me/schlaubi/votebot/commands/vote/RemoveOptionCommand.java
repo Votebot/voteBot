@@ -47,9 +47,15 @@ public class RemoveOptionCommand extends Command {
         vote.getEmotes().remove(emote);
         vote.getUserVotes().entrySet().parallelStream().forEach((entry) -> {
             if (entry.getValue().equals(voteId)) {
-                vote.getUserVotes().remove(entry.getKey());
-                vote.getVoteCounts().remove(entry.getKey());
+                long userId = entry.getKey();
+                vote.getUserVotes().remove(userId);
+                if (vote.getVoteCounts().containsKey(userId)) {
+                    var voteCount = vote.getVoteCounts().get(userId);
+                    vote.getVoteCounts().remove(userId);
+                    vote.getVoteCounts().put(userId, voteCount + 1);
+                }
             }
+            
         });
         //Update reactions registrations
         vote.getEmotes().entrySet().parallelStream().filter(entry -> entry.getValue() > voteId).forEach(entry -> {
@@ -62,7 +68,10 @@ public class RemoveOptionCommand extends Command {
             vote.getUserVotes().put(entry.getKey(), entry.getValue() - 1);
         });
         vote.crawlMessages().forEach(message -> {
-            message.getTextChannel().removeReactionById(message.getIdLong(), emote);
+            if (Helpers.isNumeric(emote))
+                message.getTextChannel().removeReactionById(message.getIdLong(), event.getGuild().getEmoteById(emote)).queue();
+            else
+                message.getTextChannel().removeReactionById(message.getIdLong(), emote).queue();
             SafeMessage.editMessage(message, vote.buildEmbed(message.getIdLong()));
         });
         return send(success(event.translate("command.removeoption.success.title"), String.format(event.translate("command.removeoption.success.description"), option)));

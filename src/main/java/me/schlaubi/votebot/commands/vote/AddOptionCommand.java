@@ -9,11 +9,11 @@ import me.schlaubi.votebot.core.command.permission.Permissions;
 import me.schlaubi.votebot.core.entities.Vote;
 import me.schlaubi.votebot.util.Misc;
 import me.schlaubi.votebot.util.SafeMessage;
+import net.dv8tion.jda.core.entities.Emote;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class AddOptionCommand extends Command {
 
@@ -39,7 +39,8 @@ public class AddOptionCommand extends Command {
         //Get unused vote id
         int voteId = vote.getOptions().size();
         //Find emote
-        List<String> allEmotes = new LinkedList<>(Arrays.asList(Misc.EMOTES));
+        List<String> allEmotes = Misc.getAvailableEmotes(vote);
+        allEmotes.addAll(event.getGuild().getEmotes().stream().map(Emote::getId).collect(Collectors.toList()));
         allEmotes.removeAll(vote.getEmotes().keySet());
         String emote = allEmotes.get(ThreadLocalRandom.current().nextInt(allEmotes.size()));
         //Register emote in vote
@@ -50,7 +51,7 @@ public class AddOptionCommand extends Command {
         vote.save();
         //Add emotes & update messages
         vote.crawlMessages().forEach(message -> {
-            message.addReaction(emote).queue();
+            vote.addEmotes(message);
             SafeMessage.editMessage(message, vote.buildEmbed(message.getIdLong()));
         });
         return send(success(event.translate("command.addoption.success.title"), String.format(event.translate("command.addoption.success.description"), option)));

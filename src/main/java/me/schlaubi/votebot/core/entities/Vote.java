@@ -14,6 +14,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.utils.Helpers;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -77,7 +78,12 @@ public class Vote extends DatabaseEntity<Vote> {
     }
 
     public void addEmotes(Message voteMessage) {
-        emotes.keySet().forEach(emote -> voteMessage.addReaction(emote).queue());
+        emotes.keySet().forEach(emote -> {
+            if (Helpers.isNumeric(emote))
+                voteMessage.addReaction(voteMessage.getGuild().getEmoteById(emote)).queue();
+            else
+                voteMessage.addReaction(emote).queue();
+        });
     }
 
     public void addMessage(Message message) {
@@ -122,7 +128,8 @@ public class Vote extends DatabaseEntity<Vote> {
         AtomicInteger count = new AtomicInteger();
         options.forEach(option -> {
                     long voteCount = getVoteCountById(count.get());
-                    answersBuilder.append("**").append(count.get() + 1).append("**").append(". ").append(Misc.getValueByKey(emotes, count.get())).append(" - ").append(option).append(": `").append(voteCount).append("`").append(System.lineSeparator());
+                    String emoteRaw = Misc.getValueByKey(emotes, count.get());
+                    answersBuilder.append("**").append(count.get() + 1).append("**").append(". ").append(Helpers.isNumeric(emoteRaw) ? Misc.mentionEmote(emoteRaw, getGuild()) :  emoteRaw).append(" - ").append(option).append(": `").append(voteCount).append("`").append(System.lineSeparator());
                     count.incrementAndGet();
                 }
         );
@@ -185,4 +192,5 @@ public class Vote extends DatabaseEntity<Vote> {
     public long getVoteCountById(Integer voteId) {
         return userVotes.entrySet().stream().filter(entry -> entry.getValue().equals(voteId)).count();
     }
+
 }

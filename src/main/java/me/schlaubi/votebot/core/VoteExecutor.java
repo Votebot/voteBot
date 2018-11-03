@@ -53,14 +53,19 @@ public class VoteExecutor {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_MANAGE))
             event.getReaction().removeReaction(user).queue();
         Vote vote = cache.getVote(event.getMessageIdLong());
-        String emoteName = event.getReaction().getReactionEmote().getName();
-        if (!vote.getEmotes().containsKey(emoteName))
+        MessageReaction.ReactionEmote emote = event.getReactionEmote();
+        String emoteIdentifier;
+        if (emote.getId() != null)
+            emoteIdentifier = emote.getId();
+        else
+            emoteIdentifier = emote.getName();
+        if (!vote.getEmotes().containsKey(emoteIdentifier))
             return;
         if (!vote.isPermitted(user)) {
             user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("You can only change your opinion 3 times.").queue());
             return;
         }
-        vote.vote(vote.getEmotes().get(emoteName), user);
+        vote.vote(vote.getEmotes().get(emoteIdentifier), user);
         vote.updateMessages();
     }
 
