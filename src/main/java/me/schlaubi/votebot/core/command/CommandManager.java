@@ -109,7 +109,7 @@ public class CommandManager implements Closeable {
             //Send typing
             channel.sendTyping().queue();
             //Delete invoke message
-            if (commandEvent.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE))
+            if (commandEvent.getGuild().getSelfMember().hasPermission(commandEvent.getChannel(), Permission.MESSAGE_MANAGE))
                 commandEvent.getMessage().delete().queue();
             //Run the commands run method
             Result result = command.run(commandEvent.getArgs(), commandEvent);
