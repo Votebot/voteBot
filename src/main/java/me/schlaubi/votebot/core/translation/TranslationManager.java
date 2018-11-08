@@ -18,7 +18,7 @@ public class TranslationManager {
         this.defaultLocale = TranslationLocale.create(Locale.forLanguageTag("en-US"), "English (United States)", this, true);
         this.locales = new ArrayList<>();
         locales.add(defaultLocale);
-        locales.add(TranslationLocale.create(Locale.forLanguageTag("en-US"), "Français (French)", this, false));
+        locales.add(TranslationLocale.create(Locale.forLanguageTag("fr-FR"), "Français (French)", this, false));
     }
 
     public boolean isTranslated(Locale locale) {
