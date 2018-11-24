@@ -1,8 +1,6 @@
 package me.schlaubi.votebot.io.database;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.datastax.driver.mapping.MappingManager;
 import lombok.Getter;
@@ -23,6 +21,10 @@ public class Cassandra implements Closeable {
             this.cluster = new Cluster.Builder()
                     .addContactPoints(contactPoints)
                     .withCredentials(username, password)
+                    .withQueryOptions(new QueryOptions()
+                            .setFetchSize(Integer.MAX_VALUE)
+                            .setConsistencyLevel(ConsistencyLevel.ALL)
+                    )
                     .build();
             this.session = cluster.connect(keyspace);
             this.defaults = new ArrayList<>();
