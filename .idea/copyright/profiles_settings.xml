@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <settings default="votebot">
+    <module2copyright>
+      <element module="All" copyright="votebot" />
+    </module2copyright>
+  </settings>
+</component>

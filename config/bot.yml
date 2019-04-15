@@ -1,0 +1,12 @@
+games: ['ONLINE:0:Gouvermental opinon manipulation tool (GOMT)!', 'ONLINE:0:With his
+    bigh brother Hawk!', 'ONLINE:3:Your opinons!', 'ONLINE:2:To music from rmcprod!']
+regnum: {host: 'ws://localhost:7001/ws', token: SUPER-SECRET-TOKEN}
+cassandra:
+  keyspace: test
+  password: cassandra
+  contact_points: [127.0.0.1]
+  username: cassandra
+command:
+  language: v!
+  owners: [416902379598774273]
+sentry: {dsn: 'https://0db36ca29e024694b227f292d7c98e58@sentry.hawkbot.cc/2?stacktrace.app.packages=all'}
