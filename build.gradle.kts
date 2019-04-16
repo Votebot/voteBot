@@ -17,11 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    java
+    id("com.github.johnrengelman.shadow").version("4.0.3")
     kotlin("jvm") version "1.3.30"
+    application
+    java
 }
 
 group = "me.schlaubi"
@@ -47,6 +50,21 @@ dependencies {
     // Kotlin
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
+}
+
+tasks {
+    "shadowJar"(ShadowJar::class) {
+        archiveBaseName.set(project.name)
+        archiveVersion.set(project.version as String)
+        archiveFileName.set("${archiveBaseName.orNull}-${archiveVersion.orNull}.${archiveExtension.orNull}")
+    }
+    "jar"(Jar::class) {
+        archiveClassifier.set("original")
+    }
+}
+
+application {
+    mainClassName = "me.schlaubi.votebot.BootstrapperKt"
 }
 
 configure<JavaPluginConvention> {
