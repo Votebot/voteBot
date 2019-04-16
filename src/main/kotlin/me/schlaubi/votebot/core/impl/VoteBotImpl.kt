@@ -20,15 +20,29 @@
 package me.schlaubi.votebot.core.impl
 
 import cc.hawkbot.regnum.client.Regnum
+import cc.hawkbot.regnum.client.entities.cache.CassandraCache
+import cc.hawkbot.regnum.client.entities.cache.impl.CassandraCacheImpl
+import com.datastax.driver.extras.codecs.jdk8.InstantCodec
 import me.schlaubi.votebot.commands.CommandContainer
 import me.schlaubi.votebot.core.VoteBot
+import me.schlaubi.votebot.core.VoteCache
+import me.schlaubi.votebot.entities.VoteGuild
+import me.schlaubi.votebot.entities.VoteUser
 
 class VoteBotImpl(
     override val regnum: Regnum
 ): VoteBot {
 
+    override val userCache: CassandraCache<VoteUser>
+    override val guildCache: CassandraCache<VoteGuild>
+    override val voteCache: VoteCache
+
     init {
+        regnum.cassandra.codecRegistry.register(InstantCodec.instance)
         regnum.eventManager.register(regnum.commandParser)
-        CommandContainer(regnum)
+        CommandContainer(regnum, this)
+        userCache = CassandraCacheImpl(regnum, VoteUser::class, VoteUser.Accessor::class.java)
+        guildCache = CassandraCacheImpl(regnum, VoteGuild::class, VoteGuild.Accessor::class.java)
+        voteCache = VoteCacheImpl(this)
     }
 }

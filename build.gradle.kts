@@ -68,7 +68,7 @@ application {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_HIGHER
+    sourceCompatibility = JavaVersion.VERSION_12
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"

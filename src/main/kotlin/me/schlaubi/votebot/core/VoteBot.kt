@@ -20,8 +20,17 @@
 package me.schlaubi.votebot.core
 
 import cc.hawkbot.regnum.client.Regnum
+import cc.hawkbot.regnum.client.entities.cache.CassandraCache
+import me.schlaubi.votebot.entities.VoteGuild
+import me.schlaubi.votebot.entities.VoteUser
 
 interface VoteBot {
 
     val regnum: Regnum
+
+    val userCache: CassandraCache<VoteUser>
+
+    val guildCache: CassandraCache<VoteGuild>
+
+    val voteCache: VoteCache
 }

@@ -84,6 +84,36 @@ fun main(args: Array<String>) {
         config.get(Config.CASSANDRA_PASSWORD),
         config.get(Config.CASSANDRA_CONTACT_POINTS)
     )
+        .addDefaultDatabases("CREATE TABLE IF NOT EXISTS user(" +
+                "id BIGINT," +
+                "default_maximum_votes INT," +
+                "default_maximum_changes INT," +
+                "default_vote_length TEXT," +
+                "PRIMARY KEY (id)" +
+                ");")
+        .addDefaultDatabases("create table if not exists votes " +
+                "(" +
+                "guild BIGINT," +
+                "messages MAP<BIGINT, BIGINT>," +
+                "author BIGINT," +
+                "heading TEXT," +
+                "options LIST<TEXT>," +
+                "answers MAP<BIGINT, frozen<LIST<INT>>>," +
+                "emote_mapping MAP<TEXT, INT>," +
+                "vote_counts MAP<BIGINT, INT>," +
+                "maximum_votes int," +
+                "maximum_changes int," +
+                "created_at timestamp," +
+                "primary key (guild, author)" +
+                ");"
+        )
+        .addDefaultDatabases("CREATE INDEX IF NOT EXISTS messageKey ON votes(KEYS(messages));")
+        .addDefaultDatabases("create table IF NOT EXISTS guilds" +
+                "(" +
+                "id bigint primary key," +
+                "use_custom_emotes boolean" +
+                ");" +
+                "")
     regnumBuilder.serverConfig = ServerConfig(config.get(Config.REGNUM_HOST), config.get(Config.REGNUM_TOKEN))
     log.info("[Launcher] Initializing Regnum!")
     VoteBotImpl(regnumBuilder.build())

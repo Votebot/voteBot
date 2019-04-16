@@ -17,27 +17,17 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package me.schlaubi.votebot.commands
+package me.schlaubi.votebot
 
-import cc.hawkbot.regnum.client.Regnum
-import cc.hawkbot.regnum.client.command.ICommand
-import me.schlaubi.votebot.commands.general.InfoCommand
-import me.schlaubi.votebot.commands.settings.SettingsCommand
-import me.schlaubi.votebot.commands.vote.QuickCreateCommand
-import me.schlaubi.votebot.core.VoteBot
+import cc.hawkbot.regnum.client.command.Group
+import cc.hawkbot.regnum.client.command.GroupBuilder
+import cc.hawkbot.regnum.client.command.permission.GroupPermissions
 
-class CommandContainer(
-    private val regnum: Regnum,
-    bot: VoteBot
-) {
+private val VOTE_GROUP = GroupBuilder()
+    .setDescription("All vote comamnds")
+    .setName("Vote")
+    .setPermissions(GroupPermissions(public = true, node = "vote"))
+    .build()
 
-    init {
-        register(InfoCommand())
-        register(SettingsCommand(bot))
-        register(QuickCreateCommand(bot))
-    }
-
-    private fun register(command: ICommand) {
-        regnum.commandParser.registerCommand(command)
-    }
-}
+val Group.Companion.VOTE
+    get() = VOTE_GROUP
