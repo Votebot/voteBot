@@ -139,15 +139,25 @@ public class Vote extends CassandraEntity<Vote> {
 
     @Transient
     public CompletionStage<Map<Message, TextChannel>> getMessages() {
-        var future = new CompletableFuture<Map<Message, TextChannel>>();
-        var messages = new HashMap<Message, TextChannel>();
-        var guild = getGuild();
-        messagesIds.forEach((message, channel) -> {
-            var textChannel = guild.getTextChannelById(channel);
-            messages.put(textChannel.retrieveMessageById(message).complete(), textChannel);
-        });
-        future.complete(messages);
-        return future;
+        return CompletableFuture.supplyAsync(() -> {
+            var messages = new HashMap<Message, TextChannel>();
+            var guild = getGuild();
+            messagesIds.forEach((message, channel) -> {
+                var textChannel = guild.getTextChannelById(channel);
+                messages.put(textChannel.retrieveMessageById(message).complete(), textChannel);
+            });
+            return messages;
+        }, VoteCache.getTHREAD_POOL());
+
+    }
+
+    public void initialize() {
+        if (answers == null) {
+            answers = new HashMap<>();
+        }
+        if (voteCounts == null) {
+            voteCounts = new HashMap<>();
+        }
     }
 
     @Transient
@@ -198,6 +208,10 @@ public class Vote extends CassandraEntity<Vote> {
 
     public void setOptions(List<String> options) {
         this.options = options;
+    }
+
+    public void setMessagesIds(Map<Long, Long> messagesIds) {
+        this.messagesIds = messagesIds;
     }
 
     public Instant getCreatedAt() {

@@ -36,7 +36,8 @@ class VoteCacheImpl(
 
     init {
         storage = accessor.all.all()
-        storage.map { it.cache = this }
+        // Filter out votes that are not managed by one of this nodes and inject cache
+        storage.filterNot { bot.regnum.discord.shardManager.getGuildById(it.guildId) == null }.map { it.cache = this }
     }
 
     override fun getVoteByMessage(messageId: Long, guildId: Long): Vote? {
@@ -71,7 +72,6 @@ class VoteCacheImpl(
         val messageIds = mapOf(Pair(message.idLong, message.channel.idLong))
         val answers = mutableMapOf<Long, List<Int>>()
         val voteCounts = mutableMapOf<Long, Int>()
-        println("INSTANCITATE")
         val vote = Vote(
             guild,
             messageIds,

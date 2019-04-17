@@ -21,13 +21,36 @@ package me.schlaubi.votebot
 
 import cc.hawkbot.regnum.client.command.Group
 import cc.hawkbot.regnum.client.command.GroupBuilder
+import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.GroupPermissions
+import cc.hawkbot.regnum.client.util.EmbedUtil
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.MessageReaction
 
 private val VOTE_GROUP = GroupBuilder()
-    .setDescription("All vote comamnds")
+    .setDescription("All vote commands")
     .setName("Vote")
     .setPermissions(GroupPermissions(public = true, node = "vote"))
     .build()
 
 val Group.Companion.VOTE
     get() = VOTE_GROUP
+
+fun MessageReaction.ReactionEmote.identifier(): String {
+    return if (this.isEmoji)
+        this.name
+    else
+        this.id
+}
+
+fun checkPermissions(context: Context, action: () -> Unit) {
+    if (!context.me.hasPermission(context.channel, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES)) {
+        return context.sendMessage(
+            EmbedUtil.error(
+                context.translate("vote.error.permissions.title"),
+                context.translate("vote.error.permissions.description")
+            )
+        ).queue()
+    }
+    action()
+}

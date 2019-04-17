@@ -19,44 +19,63 @@
 
 package me.schlaubi.votebot.commands.vote
 
-import cc.hawkbot.regnum.client.command.Command
 import cc.hawkbot.regnum.client.command.Group
 import cc.hawkbot.regnum.client.command.context.Arguments
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
+import cc.hawkbot.regnum.client.util.EmbedUtil
 import me.schlaubi.votebot.VOTE
+import me.schlaubi.votebot.checkPermissions
+import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
 
-class QuickCreateCommand (
-    private val bot: VoteBot
-): Command(
+class QuickCreateCommand(
+    bot: VoteBot
+) : VoteBotCommand(
+    bot,
     Group.VOTE,
     "Quick create",
     arrayOf("quickcreate", "quick-create", "qc"),
-    CommandPermissions(public = true, node= "quickcreate"),
+    CommandPermissions(public = true, node = "quickcreate"),
     "heading|answer1|answer2|...",
     "Is that bot cool?|yes|no",
     "Creates a vote using default settings"
 ) {
 
     override fun execute(args: Arguments, context: Context) {
-        val args = context.message.contentRaw.split("|")
-        if (args.size < 3) {
+        val arguments = args.string<String>().split("\\|".toRegex())
+        if (arguments.size < 3) {
             return context.sendHelp().queue()
         }
         if (bot.voteCache.getVoteByMember(context.member) != null) {
-            return context.sendMessage("ALREADY").queue()
+            return context.sendMessage(
+                EmbedUtil
+                    .error(
+                        context.translate("vote.error.already.title"),
+                        context.translate("vote.error.already.description")
+                    )
+            ).queue()
         }
-        val heading = args[0]
-        val options = args.subList(1, args.size)
-        val user = bot.userCache[context.author]
-        bot.voteCache.initializeVote(
-            context.channel,
-            context.member,
-            heading,
-            options,
-            user.defaultMaximumVotes,
-            user.defaultMaximumChanges
-        )
+        checkPermissions(context) {
+            val heading = arguments[0]
+            val options = arguments.subList(1, arguments.size)
+            if (options.size > 10) {
+                return@checkPermissions context.sendMessage(
+                    EmbedUtil.error(
+                        context.translate("vote.limit.title"),
+                        context.translate("vote.limit.description")
+                    )
+                ).queue()
+            }
+            val user = bot.userCache[context.author]
+            bot.voteCache.initializeVote(
+                context.channel,
+                context.member,
+                heading,
+                options,
+                user.defaultMaximumVotes,
+                user.defaultMaximumChanges
+            )
+        }
     }
 }

@@ -46,6 +46,7 @@ dependencies {
 
     // Util
     compile("commons-cli:commons-cli:20040117.000000")
+    compile("org.knowm.xchart:xchart:3.5.4")
 
     // Kotlin
     implementation(kotlin("stdlib-jdk8"))

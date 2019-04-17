@@ -20,12 +20,19 @@
 package me.schlaubi.votebot.core
 
 import cc.hawkbot.regnum.client.util.*
+import cc.hawkbot.regnum.util.DefaultThreadFactory
 import me.schlaubi.votebot.entities.Vote
 import me.schlaubi.votebot.util.Utils
 import net.dv8tion.jda.api.entities.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 
 interface VoteCache {
+
+    companion object {
+        @JvmStatic
+        val THREAD_POOL = Executors.newCachedThreadPool(DefaultThreadFactory("VoteCache"))!!
+    }
 
     val bot: VoteBot
 
@@ -65,12 +72,16 @@ interface VoteCache {
         ).queue {
             val guild = bot.guildCache[channel.guild]
             val emotes = Utils.EMOTES.toMutableList()
+            // It's time to shuffle
+            emotes.shuffle()
             if (guild.usesCustomEmotes()) {
-                emotes.addAll(0, channel.guild.emotes.map { it.id })
+                val customEmotes = channel.guild.emotes.map { it.id }.toMutableList()
+                customEmotes.shuffle()
+                emotes.addAll(0, customEmotes)
             }
             val emoteMapping = mutableMapOf<String, Int>()
             val iterator = emotes.iterator()
-            for (i in 0..options.size) {
+            for (i in 0 until options.size) {
                 emoteMapping[iterator.next()] = i
             }
 
@@ -78,9 +89,7 @@ interface VoteCache {
             emoteMapping.keys.forEach { emote ->
                 futures += Misc.addReaction(emote, it).submit()
             }
-            println("ADD REACT")
             CompletableFuture.allOf(*futures).thenRun {
-                println("FUTURE")
                 val vote = createVote(
                     author,
                     it,
@@ -90,7 +99,6 @@ interface VoteCache {
                     maximumVotes,
                     maximumChanges
                 )
-                println("EDIT")
                 it.editMessage(vote.renderVote().build()).queue()
             }
         }

@@ -22,12 +22,15 @@ package me.schlaubi.votebot.core.impl
 import cc.hawkbot.regnum.client.Regnum
 import cc.hawkbot.regnum.client.entities.cache.CassandraCache
 import cc.hawkbot.regnum.client.entities.cache.impl.CassandraCacheImpl
+import cc.hawkbot.regnum.client.events.discord.ReadyEvent
 import com.datastax.driver.extras.codecs.jdk8.InstantCodec
 import me.schlaubi.votebot.commands.CommandContainer
 import me.schlaubi.votebot.core.VoteBot
 import me.schlaubi.votebot.core.VoteCache
+import me.schlaubi.votebot.core.VoteExecutor
 import me.schlaubi.votebot.entities.VoteGuild
 import me.schlaubi.votebot.entities.VoteUser
+import net.dv8tion.jda.api.hooks.SubscribeEvent
 
 class VoteBotImpl(
     override val regnum: Regnum
@@ -35,14 +38,19 @@ class VoteBotImpl(
 
     override val userCache: CassandraCache<VoteUser>
     override val guildCache: CassandraCache<VoteGuild>
-    override val voteCache: VoteCache
+    override lateinit var voteCache: VoteCache
 
     init {
         regnum.cassandra.codecRegistry.register(InstantCodec.instance)
-        regnum.eventManager.register(regnum.commandParser)
+        regnum.eventManager.register(this)
         CommandContainer(regnum, this)
         userCache = CassandraCacheImpl(regnum, VoteUser::class, VoteUser.Accessor::class.java)
         guildCache = CassandraCacheImpl(regnum, VoteGuild::class, VoteGuild.Accessor::class.java)
+    }
+
+    @SubscribeEvent
+    private fun whenReady(event: ReadyEvent) {
         voteCache = VoteCacheImpl(this)
+        regnum.eventManager.register(VoteExecutor(this))
     }
 }

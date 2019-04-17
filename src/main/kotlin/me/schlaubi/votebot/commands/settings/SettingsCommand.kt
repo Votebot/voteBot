@@ -50,8 +50,8 @@ class SettingsCommand(
                 )
             ).queue()
         }
-        when (args[0]) {
-            "maxVotes" -> {
+        when (args[0].toLowerCase()) {
+            "maxvotes" -> {
                 setting(args, {
                     @Suppress("SpellCheckingInspection")
                     context.sendMessage(
@@ -63,6 +63,9 @@ class SettingsCommand(
                     ).queue()
                 }, {
                     checkSame(context, it, user.defaultMaximumVotes) {
+                        if (user.defaultMaximumChanges > 1) {
+                            return@checkSame context.sendMessage("You have to disable changes!").queue()
+                        }
                         if (!Misc.isNumeric(it)) {
                             return@checkSame context.sendMessage(
                                 EmbedUtil.error(
@@ -85,7 +88,7 @@ class SettingsCommand(
                     }
                 })
             }
-            "maxChanges" -> {
+            "maxchanges" -> {
                 setting(args, {
                     @Suppress("SpellCheckingInspection")
                     context.sendMessage(
@@ -97,6 +100,9 @@ class SettingsCommand(
                     ).queue()
                 }, {
                     checkSame(context, it, user.defaultMaximumChanges) {
+                        if (user.defaultMaximumVotes > 1) {
+                            return@checkSame context.sendMessage("You have to disable multiple votes!").queue()
+                        }
                         if (!Misc.isNumeric(it)) {
                             return@checkSame context.sendMessage(
                                 EmbedUtil.error(
