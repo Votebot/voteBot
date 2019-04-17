@@ -31,6 +31,11 @@ import java.awt.image.BufferedImage
 import java.io.*
 import javax.imageio.ImageIO
 
+/**
+ * Pie chart used for summarizing vote result
+ * @param heading the title of the vote
+ * @param tiles an array of all vote options
+ */
 class PieChart(
     private val heading: String,
     tiles: Array<PieTile>
@@ -43,9 +48,11 @@ class PieChart(
 
     init {
         chart = createChart()
+        // Add all options and their percentage to chart
         tiles.forEach {
             chart.addSeries(it.title, it.percentage)
         }
+        // Apply VoteBot's super cool stlye
         style(chart.styler)
     }
 
@@ -78,8 +85,11 @@ class PieChart(
     private fun encode() = BitmapEncoder.getBufferedImage(chart)
 
     fun toInputStream(): InputStream {
+        // Create output stream
         val bos = ByteArrayOutputStream()
+        // Write image to output stream
         ImageIO.write(bufferedImage, "png", bos)
+        // Create input stream from outputstream
         return ByteArrayInputStream(bos.toByteArray())
     }
 }

@@ -7,6 +7,6 @@ cassandra:
   contact_points: [127.0.0.1]
   username: cassandra
 command:
-  language: v!
+  prefix: v!
   owners: [416902379598774273]
 sentry: {dsn: 'https://0db36ca29e024694b227f292d7c98e58@sentry.hawkbot.cc/2?stacktrace.app.packages=all'}

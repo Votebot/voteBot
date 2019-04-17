@@ -33,9 +33,15 @@ private val VOTE_GROUP = GroupBuilder()
     .setPermissions(GroupPermissions(public = true, node = "vote"))
     .build()
 
+/**
+ * Vote command group.
+ */
 val Group.Companion.VOTE
     get() = VOTE_GROUP
 
+/**
+ * Generates an identifier for [cc.hawkbot.regnum.client.util.Misc.addReaction].
+ */
 fun MessageReaction.ReactionEmote.identifier(): String {
     return if (this.isEmoji)
         this.name
@@ -43,6 +49,9 @@ fun MessageReaction.ReactionEmote.identifier(): String {
         this.id
 }
 
+/**
+ * Checks permissions for [context] and executes [action] or send an error message.
+ */
 fun checkPermissions(context: Context, action: () -> Unit) {
     if (!context.me.hasPermission(context.channel, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES)) {
         return context.sendMessage(

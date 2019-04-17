@@ -27,6 +27,10 @@ import cc.hawkbot.regnum.client.util.EmbedUtil
 import me.schlaubi.votebot.core.VoteBot
 import net.dv8tion.jda.api.Permission
 
+/**
+ * Extension of [Command] adding [bot] field.
+ * @see Command
+ */
 abstract class VoteBotCommand(
     protected val bot: VoteBot,
     group: Group,

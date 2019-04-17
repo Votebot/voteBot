@@ -85,11 +85,7 @@ class VoteCacheImpl(
             maximumChanges
         )
         vote.cache = this
-        try {
-            vote.saveAsync()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        vote.saveAsync()
         return vote
     }
 }

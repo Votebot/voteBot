@@ -47,6 +47,8 @@ class QuickCreateCommand(
         if (arguments.size < 3) {
             return context.sendHelp().queue()
         }
+
+        // Check if the use already has a vote
         if (bot.voteCache.getVoteByMember(context.member) != null) {
             return context.sendMessage(
                 EmbedUtil
@@ -56,7 +58,9 @@ class QuickCreateCommand(
                     )
             ).queue()
         }
+        // Verify that this channels is suitable for vote messages (perm-check)
         checkPermissions(context) {
+            // Parse arguments
             val heading = arguments[0]
             val options = arguments.subList(1, arguments.size)
             if (options.size > 10) {
@@ -68,6 +72,7 @@ class QuickCreateCommand(
                 ).queue()
             }
             val user = bot.userCache[context.author]
+            // Create vote
             bot.voteCache.initializeVote(
                 context.channel,
                 context.member,

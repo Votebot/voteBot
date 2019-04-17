@@ -48,7 +48,9 @@ class VoteBotImpl(
         guildCache = CassandraCacheImpl(regnum, VoteGuild::class, VoteGuild.Accessor::class.java)
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     @SubscribeEvent
+    // The parameter is needed because the event manager need to know the event
     private fun whenReady(event: ReadyEvent) {
         voteCache = VoteCacheImpl(this)
         regnum.eventManager.register(VoteExecutor(this))

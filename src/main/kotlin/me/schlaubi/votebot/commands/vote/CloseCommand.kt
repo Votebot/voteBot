@@ -41,6 +41,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
 ) {
     override fun execute(args: Arguments, context: Context) {
         val messageId = args.array.getOrNull(0)
+        // Check if user wants to create his own vote and if it exitsts
         val vote = if (messageId == null) {
             bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
                 EmbedUtil.error(
@@ -49,6 +50,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                 )
             ).queue()
         } else {
+            // Check if message id is numeric
             if (!Misc.isNumeric(messageId)) {
                 return context.sendMessage(
                     EmbedUtil.error(
@@ -57,6 +59,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                     )
                 ).queue()
             } else {
+                // Check if user is permitted
                 if (!context.regnumUser().hasPermission(
                         CommandPermissions(
                             serverAdminExclusive = true,
@@ -71,6 +74,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                         )
                     ).queue()
                 }
+                // Verify that vote exists
                 bot.voteCache.getVoteByMessage(messageId.toLong(), context.guild.idLong) ?: return context.sendMessage(
                     EmbedUtil.error(
                         context.translate("vote.invalid.title"),
@@ -79,6 +83,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                 ).queue()
             }
         }
+        // Delete vote and catch for dupe error
         try {
             vote.controller.deleteVote()
         } catch (e: IllegalArgumentException) {
@@ -89,6 +94,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                 )
             ).queue()
         }
+        // Confirm deletion
         context.sendMessage(
             EmbedUtil.success(
                 context.translate("vote.closed.title"),

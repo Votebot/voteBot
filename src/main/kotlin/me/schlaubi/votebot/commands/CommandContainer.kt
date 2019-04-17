@@ -30,11 +30,14 @@ import me.schlaubi.votebot.commands.vote.StatusCommand
 import me.schlaubi.votebot.commands.vote.VoteCommand
 import me.schlaubi.votebot.core.VoteBot
 
+/**
+ * Container of all commands.
+ */
 class CommandContainer(
     private val regnum: Regnum,
     bot: VoteBot
 ) {
-
+    // Register all commands
     init {
         register(InfoCommand())
         register(SettingsCommand(bot))

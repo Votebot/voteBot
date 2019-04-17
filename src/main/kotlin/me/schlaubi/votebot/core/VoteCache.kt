@@ -74,6 +74,7 @@ interface VoteCache {
             val emotes = Utils.EMOTES.toMutableList()
             // It's time to shuffle
             emotes.shuffle()
+            // Add custom emotes if enabled
             if (guild.usesCustomEmotes()) {
                 val customEmotes = channel.guild.emotes.map { it.id }.toMutableList()
                 customEmotes.shuffle()
@@ -81,14 +82,17 @@ interface VoteCache {
             }
             val emoteMapping = mutableMapOf<String, Int>()
             val iterator = emotes.iterator()
+            // Randomly map emotes to options
             for (i in 0 until options.size) {
                 emoteMapping[iterator.next()] = i
             }
 
+            // Add all reactions to the message
             var futures = arrayOf<CompletableFuture<Void>>()
             emoteMapping.keys.forEach { emote ->
                 futures += Misc.addReaction(emote, it).submit()
             }
+            // Wait till all reactions got added and create vote
             CompletableFuture.allOf(*futures).thenRun {
                 val vote = createVote(
                     author,

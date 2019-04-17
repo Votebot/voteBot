@@ -46,9 +46,6 @@ fun main(args: Array<String>) {
 
     val options = Options()
         .addOption(
-            Option("D", "debug", false, "Enables debug mode")
-        )
-        .addOption(
             Option("LL", "log-level", true, "Defines the logging level")
         )
         .addOption(
@@ -68,8 +65,8 @@ fun main(args: Array<String>) {
     SentryAppender.injectSentry(sentry)
     log.info("[Launcher] Initialized Sentry!")
 
-    val debug = cmd.hasOption("D")
     val regnumBuilder = RegnumBuilder()
+    // Disable message cache because its only suitable for logging
     regnumBuilder.disableFeatures(Feature.MESSAGE_CACHE)
     val games = config.get<List<String>>(Config.GAMES)
         .map { GameAnimator.Game.compile(it) }

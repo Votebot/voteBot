@@ -21,12 +21,17 @@ package me.schlaubi.votebot.core.graphics
 
 import java.text.DecimalFormat
 
+/**
+ * Data class containing [title] and [percentage]
+ */
 data class PieTile(
     var title: String,
     val percentage: Double
 ) {
     init {
+        // Cut off heading when name is too long
         val name = if (title.length >= 10) title.substring(0, 10) + "..." else title
+        // Format percentage and title
         this.title = "$name - ${DecimalFormat("##.#").format(percentage * 100)}%"
     }
 }

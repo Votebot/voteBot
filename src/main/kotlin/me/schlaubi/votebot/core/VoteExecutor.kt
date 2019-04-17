@@ -38,57 +38,66 @@ class VoteExecutor(
     @SubscribeEvent
     private fun voteReceived(event: GuildMessageReactionAddEvent) {
         runChecks(event.messageIdLong, event.guild.idLong) {
+            // Check if the reaction is by the bot itself
             if (event.member == event.guild.selfMember) {
                 return@runChecks
             }
+            // Remove the reaction anyways :P
             val user = event.user
             event.reaction.removeReaction(user).queue()
             if (user.isBot) {
                 return@runChecks
             }
+            // Check if the emote is mapped
             val index = it.emoteMapping[event.reactionEmote.name] ?: return@runChecks
-            try {
-                it.controller.addVote(event.user, index)
-            } catch (e: IllegalArgumentException) {
-                user.openPrivateChannel().queue { channel ->
-                    if (e.message == "This option does not exist") {
-                        channel.sendMessage(
-                            EmbedUtil.error(
-                                translate(user, "vote.invalid.option.title"),
-                                translate(user, "vote.invalid.option.description")
-                            ).build()
-                        ).queue()
+            // Register the vote
+            addVote(it, user, index)
+        }
+    }
 
-                    } else {
-                        channel.sendMessage(
-                            EmbedUtil.warn(
-                                translate(user, "vote.same.title"),
-                                translate(user, "vote.same.description")
-                            ).build()
-                        ).queue()
-                    }
+    private fun addVote(vote: Vote, user: User, index: Int) {
+        try {
+            vote.controller.addVote(user, index)
+        } catch (e: IllegalArgumentException) {
+            user.openPrivateChannel().queue { channel ->
+                if (e.message == "This option does not exist") {
+                    channel.sendMessage(
+                        EmbedUtil.error(
+                            translate(user, "vote.invalid.option.title"),
+                            translate(user, "vote.invalid.option.description")
+                        ).build()
+                    ).queue()
+
+                } else {
+                    channel.sendMessage(
+                        EmbedUtil.warn(
+                            translate(user, "vote.same.title"),
+                            translate(user, "vote.same.description")
+                        ).build()
+                    ).queue()
                 }
-            } catch (e: IllegalStateException) {
-                user.openPrivateChannel().queue { channel ->
-                    @Suppress("SpellCheckingInspection")
-                    if (it.maximumChanges > 1) {
-                        channel.sendMessage(
-                            EmbedUtil.error(
-                                translate(user, "vote.toomany.changes.title"),
-                                translate(user, "vote.toomany.changes.description")
-                            ).build()
-                        ).queue()
-                    } else {
-                        channel.sendMessage(
-                            EmbedUtil.error(
-                                translate(user, "vote.toomany.votes.title"),
-                                translate(user, "vote.toomany.votes.description")
-                            ).build()
-                        ).queue()
-                    }
+            }
+        } catch (e: IllegalStateException) {
+            user.openPrivateChannel().queue { channel ->
+                @Suppress("SpellCheckingInspection")
+                if (vote.maximumChanges > 1) {
+                    channel.sendMessage(
+                        EmbedUtil.error(
+                            translate(user, "vote.toomany.changes.title"),
+                            translate(user, "vote.toomany.changes.description")
+                        ).build()
+                    ).queue()
+                } else {
+                    channel.sendMessage(
+                        EmbedUtil.error(
+                            translate(user, "vote.toomany.votes.title"),
+                            translate(user, "vote.toomany.votes.description")
+                        ).build()
+                    ).queue()
                 }
             }
         }
+
     }
 
     private fun translate(user: User, key: String): String {
@@ -99,8 +108,10 @@ class VoteExecutor(
     private fun voteMessageDeleted(event: GuildMessageDeleteEvent) {
         val messageId = event.messageIdLong
         runChecks(messageId, event.guild.idLong) {
+            // Removes the message from the vote
             it.messagesIds = it.messagesIds.filterNot { entry -> entry.key == messageId }
             if (it.messagesIds.isEmpty()) {
+                // Deletes the vote if there are no more messages attached to it
                 it.deleteAsync()
             } else {
                 it.saveAsync()
@@ -112,7 +123,9 @@ class VoteExecutor(
     private fun voteReactionDeleted(event: GuildMessageReactionRemoveEvent) {
         runChecks(event.messageIdLong, event.guild.idLong) {
             val emote = event.reactionEmote.identifier()
+            // Check if deleted reaction was added by bot and is an actual mapped emote
             if (event.user == event.jda.selfUser && emote in it.emoteMapping.keys) {
+                // Add reaction again
                 event.channel.retrieveMessageById(event.messageId).queue { message ->
                     Misc.addReaction(emote, message).queue()
                 }
@@ -120,6 +133,9 @@ class VoteExecutor(
         }
     }
 
+    /**
+     * Checks if the [messageId] on [guildId] is attached to a vote and executes [action].
+     */
     private fun runChecks(messageId: Long, guildId: Long, action: (vote: Vote) -> Unit) {
         val vote = bot.voteCache.getVoteByMessage(messageId, guildId) ?: return
         VoteCache.THREAD_POOL.execute {

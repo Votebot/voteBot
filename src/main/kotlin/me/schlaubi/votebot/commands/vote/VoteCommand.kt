@@ -46,26 +46,34 @@ class VoteCommand(
             return context.sendHelp().queue()
         }
 
+        // Verify that message id is a number
         if (!Misc.isNumeric(args[0])) {
             return context.sendMessage(EmbedUtil.error(
                 context.translate("phrases.invalid.number.title"),
                 context.translate("phrases.invalid.number.description")
             )).queue()
         }
+
+        // Check if there is a vote attached to the message id
         val vote = bot.voteCache.getVoteByMessage(args[0].toLong(), context.guild.idLong) ?: return context.sendMessage(
             EmbedUtil.error(
                 context.translate("vote.invalid.title"),
                 context.translate("vote.invalid.description")
             )
         ).queue()
+
+        // Check if index is a number
         if (!Misc.isNumeric(args[1])) {
             return context.sendMessage(EmbedUtil.error(
                 context.translate("phrases.invalid.number.title"),
                 context.translate("phrases.invalid.number.description")
             )).queue()
         }
+
+        // Subtract one because arrays are null-based (EXTREMELY COOL FOR END-USERS!!)
         val index = args[1].toInt() - 1
         try {
+            // Register vote and send success message
             vote.controller.addVote(context.author, index).thenRun {
                 context.sendMessage(EmbedUtil.success(
                     context.translate("vote.success.title"),
@@ -73,7 +81,9 @@ class VoteCommand(
                         .format(args[1])
                 )).queue()
             }
-        } catch (e: IllegalArgumentException) {
+        }
+        // Handle known errors
+        catch (e: IllegalArgumentException) {
             if (e.message == "This option does not exist") {
                 context.sendMessage(EmbedUtil.error(
                     context.translate("vote.invalid.option.title"),

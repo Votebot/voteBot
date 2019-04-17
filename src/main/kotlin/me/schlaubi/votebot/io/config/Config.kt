@@ -21,17 +21,28 @@ package me.schlaubi.votebot.io.config
 
 import cc.hawkbot.regnum.io.config.GenericConfig
 
+/**
+ * Configuration class for VoteBot.
+ * @param path path of config
+ * @constructor Initializes config
+ */
 class Config(path: String) : GenericConfig(path) {
 
     companion object {
+        // DSN for centralized logging with sentry
         const val SENTRY_DSN = "sentry.dsn"
+        // Array of games for game animator
         const val GAMES = "games"
-        const val COMMAND_PREFIX = "command.language"
+        // Prefix for commands
+        const val COMMAND_PREFIX = "command.prefix"
+        // Array of user ids wo owns owner permissions
         const val COMMAND_OWNERS = "command.owners"
+        // Cassandra login data
         const val CASSANDRA_KEYSPACE = "cassandra.keyspace"
         const val CASSANDRA_USERNAME = "cassandra.username"
         const val CASSANDRA_PASSWORD = "cassandra.password"
         const val CASSANDRA_CONTACT_POINTS = "cassandra.contact_points"
+        // Regnum server data
         const val REGNUM_HOST = "regnum.host"
         const val REGNUM_TOKEN = "regnum.token"
     }
