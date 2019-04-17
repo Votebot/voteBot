@@ -19,18 +19,19 @@
 
 package me.schlaubi.votebot.commands.settings
 
-import cc.hawkbot.regnum.client.command.Command
 import cc.hawkbot.regnum.client.command.Group
 import cc.hawkbot.regnum.client.command.context.Arguments
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
 import cc.hawkbot.regnum.client.util.EmbedUtil
 import cc.hawkbot.regnum.client.util.Misc
+import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
 
 class SettingsCommand(
-    private val bot: VoteBot
-) : Command(
+    bot: VoteBot
+) : VoteBotCommand(
+    bot,
     Group.SETTINGS,
     "Settings",
     arrayOf("settings", "preferences", "pref"),
