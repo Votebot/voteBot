@@ -33,9 +33,7 @@ class CustomEmotesCommand(bot: VoteBot) : VoteBotCommand(
     "Custom emotes",
     arrayOf("customemotes", "ce"),
     CommandPermissions(serverAdminExclusive = true, node = "customemotes"),
-    "",
-    "",
-    "Toggles whether custom emotes should be used for votes or not"
+    description = "Toggles whether custom emotes should be used for votes or not"
 ) {
     override fun execute(args: Arguments, context: Context) {
         val guild = bot.guildCache[context.guild]

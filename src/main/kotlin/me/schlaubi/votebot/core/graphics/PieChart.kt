@@ -78,8 +78,8 @@ class PieChart(
         this.bufferedImage = encode()
         val graphics = bufferedImage.createGraphics()
         graphics.font = font.deriveFont(Font.PLAIN, 15F)
-        graphics.drawString("Powered by", 490, 380);
-        graphics.drawImage(logo, 570, 360, 25, 25, null);
+        graphics.drawString("Powered by", 490, 380)
+        graphics.drawImage(logo, 570, 360, 25, 25, null)
     }
 
     private fun encode() = BitmapEncoder.getBufferedImage(chart)

@@ -23,12 +23,13 @@ import cc.hawkbot.regnum.client.command.Group
 import cc.hawkbot.regnum.client.command.context.Arguments
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
-import cc.hawkbot.regnum.client.util.*
+import cc.hawkbot.regnum.client.util.EmbedUtil
+import cc.hawkbot.regnum.client.util.Emotes
+import cc.hawkbot.regnum.client.util.Misc
 import me.schlaubi.votebot.VOTE
 import me.schlaubi.votebot.checkPermissions
 import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
-import net.dv8tion.jda.api.entities.MessageEmbed
 import java.util.concurrent.CompletableFuture
 
 class StatusCommand(bot: VoteBot): VoteBotCommand(

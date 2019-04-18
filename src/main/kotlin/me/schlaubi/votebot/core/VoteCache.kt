@@ -46,10 +46,6 @@ interface VoteCache {
         return getVoteByUser(member.user, member.guild)
     }
 
-    fun getVoteByMessage(message: Message): Vote? {
-        return getVoteByMessage(message.idLong, message.guild.idLong)
-    }
-
     fun updateVote(vote: Vote)
 
     fun deleteVote(vote: Vote)
@@ -72,14 +68,13 @@ interface VoteCache {
         ).queue {
             val guild = bot.guildCache[channel.guild]
             val emotes = Utils.EMOTES.toMutableList()
-            // It's time to shuffle
-            emotes.shuffle()
             // Add custom emotes if enabled
             if (guild.usesCustomEmotes()) {
                 val customEmotes = channel.guild.emotes.map { it.id }.toMutableList()
-                customEmotes.shuffle()
                 emotes.addAll(0, customEmotes)
             }
+            // It's time to shuffle
+            emotes.shuffle()
             val emoteMapping = mutableMapOf<String, Int>()
             val iterator = emotes.iterator()
             // Randomly map emotes to options

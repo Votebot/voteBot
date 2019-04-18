@@ -26,14 +26,12 @@ import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
 import cc.hawkbot.regnum.client.util.EmbedUtil
 
-class InfoCommand: Command(
+class InfoCommand : Command(
     Group.GENERAL,
     "Info",
     arrayOf("info", "about"),
     CommandPermissions(public = true, node = "info"),
-    "",
-    "",
-    "Displays generic information about the bot"
+    description = "Displays generic information about the bot"
 ) {
 
     override fun execute(args: Arguments, context: Context) {
@@ -46,10 +44,26 @@ class InfoCommand: Command(
                 .addField(context.translate("command.info.author"), "[Schlaubi#1337](https://rittmeister.in)", true)
                 .addField(context.translate("command.info.community"), "[CrazyPilz#0117](https://crazypilz.ga)", true)
                 .addField(context.translate("command.info.designer"), "[Rxsto#1337](https://rxsto.me)", true)
-                .addField(context.translate("command.info.source"), "[github.com](https://github.com/DRSchlaubi/votebot)", true)
-                .addField(context.translate("command.info.translate"), "[i18n.hawkbot.cc](https://i18n.hawkbot.cc)", true)
-                .addField(context.translate("command.info.support"), "[discord.gg/j9RCgsn](https://discord.gg/j9RCgsn)", true)
-                .addField(context.translate("command.info.donate"), "[paypal.me/schlaubiboy](https://paypal.me/Schlaubiboy)", true)
+                .addField(
+                    context.translate("command.info.source"),
+                    "[github.com](https://github.com/DRSchlaubi/votebot)",
+                    true
+                )
+                .addField(
+                    context.translate("command.info.translate"),
+                    "[i18n.hawkbot.cc](https://i18n.hawkbot.cc)",
+                    true
+                )
+                .addField(
+                    context.translate("command.info.support"),
+                    "[discord.gg/j9RCgsn](https://discord.gg/j9RCgsn)",
+                    true
+                )
+                .addField(
+                    context.translate("command.info.donate"),
+                    "[paypal.me/schlaubiboy](https://paypal.me/Schlaubiboy)",
+                    true
+                )
         ).queue()
     }
 }

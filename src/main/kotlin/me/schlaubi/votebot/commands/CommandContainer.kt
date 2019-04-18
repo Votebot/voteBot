@@ -24,10 +24,7 @@ import cc.hawkbot.regnum.client.command.ICommand
 import me.schlaubi.votebot.commands.general.InfoCommand
 import me.schlaubi.votebot.commands.settings.CustomEmotesCommand
 import me.schlaubi.votebot.commands.settings.SettingsCommand
-import me.schlaubi.votebot.commands.vote.CloseCommand
-import me.schlaubi.votebot.commands.vote.QuickCreateCommand
-import me.schlaubi.votebot.commands.vote.StatusCommand
-import me.schlaubi.votebot.commands.vote.VoteCommand
+import me.schlaubi.votebot.commands.vote.*
 import me.schlaubi.votebot.core.VoteBot
 
 /**
@@ -46,6 +43,7 @@ class CommandContainer(
         register(CloseCommand(bot))
         register(StatusCommand(bot))
         register(CustomEmotesCommand(bot))
+        register(CreateCommand(bot))
     }
 
     private fun register(command: ICommand) {

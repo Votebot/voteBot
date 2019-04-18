@@ -36,8 +36,7 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
     arrayOf("close", "delete", "remove"),
     CommandPermissions(public = true, node = "close"),
     "[messageId]",
-    "",
-    "Closes a vot manually"
+    description = "Closes a vot manually"
 ) {
     override fun execute(args: Arguments, context: Context) {
         val messageId = args.array.getOrNull(0)

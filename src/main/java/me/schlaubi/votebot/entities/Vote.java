@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.internal.utils.Helpers;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +68,7 @@ public class Vote extends CassandraEntity<Vote> {
     private int maximumVotes;
     @Column(name = "maximum_changes")
     private int maximumChanges;
+    @SuppressWarnings("CanBeFinal")
     @Column(name = "created_at")
     private Instant createdAt = Instant.now();
 

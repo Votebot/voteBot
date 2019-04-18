@@ -21,11 +21,8 @@ package me.schlaubi.votebot.commands
 
 import cc.hawkbot.regnum.client.command.Command
 import cc.hawkbot.regnum.client.command.Group
-import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.IPermissions
-import cc.hawkbot.regnum.client.util.EmbedUtil
 import me.schlaubi.votebot.core.VoteBot
-import net.dv8tion.jda.api.Permission
 
 /**
  * Extension of [Command] adding [bot] field.
@@ -37,7 +34,7 @@ abstract class VoteBotCommand(
     displayName: String,
     aliases: Array<String>,
     permissions: IPermissions,
-    usage: String,
-    exampleUsage: String,
+    usage: String = "",
+    exampleUsage: String = "",
     description: String
 ): Command(group, displayName, aliases, permissions, usage, exampleUsage, description)
