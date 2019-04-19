@@ -74,7 +74,7 @@ class StatusCommand(bot: VoteBot): VoteBotCommand(
                     messageIds[it.idLong] = it.channel.idLong
                     vote.messagesIds = messageIds
                     // Save and edit message
-                    vote.saveAsync().thenRun {
+                    CompletableFuture.allOf(*futures.toTypedArray(), vote.saveAsync().toCompletableFuture()).thenRun {
                         it.editMessage(vote.renderVote().build()).queue()
                     }
                 }

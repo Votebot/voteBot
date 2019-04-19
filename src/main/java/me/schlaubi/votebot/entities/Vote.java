@@ -214,6 +214,10 @@ public class Vote extends CassandraEntity<Vote> {
         this.messagesIds = messagesIds;
     }
 
+    public void setEmoteMapping(Map<String, Integer> emoteMapping) {
+        this.emoteMapping = emoteMapping;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }

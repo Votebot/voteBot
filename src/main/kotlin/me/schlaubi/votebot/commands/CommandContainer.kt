@@ -44,6 +44,9 @@ class CommandContainer(
         register(StatusCommand(bot))
         register(CustomEmotesCommand(bot))
         register(CreateCommand(bot))
+        register(ChangeHeadingCommand(bot))
+        register(AddOptionCommand(bot))
+        register(RemoveOptionCommand(bot))
     }
 
     private fun register(command: ICommand) {

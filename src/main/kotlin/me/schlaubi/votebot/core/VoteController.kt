@@ -19,10 +19,12 @@
 
 package me.schlaubi.votebot.core
 
+import cc.hawkbot.regnum.client.util.Misc
 import cc.hawkbot.regnum.client.util.TranslationUtil
 import me.schlaubi.votebot.core.graphics.PieChart
 import me.schlaubi.votebot.core.graphics.PieTile
 import me.schlaubi.votebot.entities.Vote
+import me.schlaubi.votebot.util.Utils
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
@@ -43,15 +45,15 @@ class VoteController(
     private fun updateMessages(): CompletableFuture<Void> {
         val future = CompletableFuture<Void>()
         vote.messages
-                // Map to messages only
+            // Map to messages only
             .thenApplyAsync(Function<Map<Message, TextChannel>, Set<Message>> { t -> t.keys }, VoteCache.THREAD_POOL)
-                // Edit messages
+            // Edit messages
             .thenApplyAsync(
                 Function<Set<Message>, List<CompletableFuture<Message>>>
                 { it.map { message -> message.editMessage(vote.renderVote().build()).submit() } },
                 VoteCache.THREAD_POOL
             )
-                // Map futures
+            // Map futures
             .thenAcceptAsync(Consumer {
                 CompletableFuture.allOf(*it.toTypedArray())
                     .thenRunAsync(Runnable {
@@ -104,6 +106,78 @@ class VoteController(
         return CompletableFuture.allOf(vote.saveAsync().toCompletableFuture(), updateMessages())
     }
 
+    fun setHeading(heading: String) {
+        vote.heading = heading
+        updateMessages()
+        vote.saveAsync()
+    }
+
+    fun addOption(option: String) {
+        if (vote.options.size == 10) {
+            throw IllegalStateException("Vote cannot have more than 10 options!")
+        }
+        // Get all emotes
+        val guild = vote.cache.bot.guildCache[vote.guildId]
+        val emotes = Utils.EMOTES.toMutableList()
+        // Add custom emotes if enabled
+        if (guild.usesCustomEmotes()) {
+            val customEmotes = vote.guild.emotes.map { it.id }.toMutableList()
+            emotes.addAll(0, customEmotes)
+        }
+        // Filter out used emotes
+        emotes.removeAll { it in vote.emoteMapping.keys }
+        // Shuffle emotes
+        emotes.shuffle()
+        // Assign emote to option
+        val emote = emotes.first()
+        vote.emoteMapping[emote] = vote.options.size
+        // Register option
+        vote.options.add(option)
+        vote.saveAsync()
+        vote.messages.thenAccept {
+            it.keys.forEach { message ->
+                message.editMessage(vote.renderVote().build()).queue()
+                Misc.addReaction(emote, message).queue()
+            }
+        }
+    }
+
+    fun removeOption(optionIndex: Int) {
+        if (optionIndex >= vote.options.size) {
+            throw IllegalStateException("Unknown option!")
+        }
+        // Unregister emote
+        vote.emoteMapping = vote.emoteMapping.filterNot { it.value == optionIndex }
+        // Gift users another vote if the've voted for that option
+        val users = vote.answers.filterValues { optionIndex in it }
+        users.forEach { (user, answers) ->
+            answers.remove(optionIndex)
+            vote.answers[user] = answers
+            if (vote.maximumVotes > 1) {
+                vote.voteCounts[user] = vote.voteCounts[0] ?: 1 - 1
+            }
+        }
+        // Rearrange votes
+        if (optionIndex != vote.options.size - 1) {
+            for (i in optionIndex + 1 until vote.options.size) {
+                vote.answers.forEach { (user, votes) ->
+                    if (i in votes) {
+                        votes -= i
+                        votes += i - 1
+                        vote.answers[user] = votes
+                    }
+                }
+            }
+        }
+        // Rearrange emotes
+        vote.emoteMapping.filterValues { it > optionIndex }.forEach { (emote, index) ->
+            vote.emoteMapping[emote] = index - 1
+        }
+        vote.options.removeAt(optionIndex)
+        vote.saveAsync()
+        updateMessages()
+    }
+
     fun deleteVote() {
         vote.deleteAsync()
         // Only generate chart when it's possible
@@ -140,8 +214,8 @@ class VoteController(
                     fallbackEdit(messages)
                 } else {
                     // Send chart to all applicable channels
-                    channels.forEach { entry ->
-                        entry.value.sendFile(chart.toInputStream(), "chart.png").queue()
+                    channels.values.distinct().forEach { entry ->
+                        entry.sendFile(chart.toInputStream(), "chart.png").queue()
                     }
                 }
             }
@@ -161,7 +235,6 @@ class VoteController(
             it.editMessage(vote.renderVote().setFooter("Vote closed!", null).build()).queue()
         }
     }
-
 
     fun translate(key: String): String {
         return TranslationUtil.translate(vote.cache.bot.regnum, key, vote.authorId)
