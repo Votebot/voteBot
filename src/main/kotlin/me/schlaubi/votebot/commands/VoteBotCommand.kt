@@ -57,12 +57,14 @@ abstract class VoteBotCommand(
     }
 
     protected fun hasNoVote(context: Context, action: () -> Unit) {
-        bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.notexist.title"),
-                context.translate("vote.notexist.description")
-            )
-        ).queue()
+        if (bot.voteCache.getVoteByUser(context.author, context.guild) != null) {
+            return context.sendMessage(
+                EmbedUtil.error(
+                    context.translate("vote.error.already.title"),
+                    context.translate("vote.error.already.description")
+                )
+            ).queue()
+        }
         action()
     }
 

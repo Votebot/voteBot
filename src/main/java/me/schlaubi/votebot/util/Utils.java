@@ -48,4 +48,5 @@ public class Utils {
         }
         return message.getChannel().removeReactionById(messageId, emote);
     }
+
 }

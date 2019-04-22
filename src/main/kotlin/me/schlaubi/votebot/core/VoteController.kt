@@ -46,25 +46,19 @@ class VoteController(
         vote.initialize()
     }
 
-    private fun updateMessages(): CompletableFuture<Void> {
-        val future = CompletableFuture<Void>()
-        vote.messages
+    private fun updateMessages(): CompletableFuture<Set<Message>> {
+        return vote.messages
             // Map to messages only
             .thenApplyAsync(Function<Map<Message, TextChannel>, Set<Message>> { t -> t.keys }, VoteCache.THREAD_POOL)
-            // Edit messages
-            .thenApplyAsync(
-                Function<Set<Message>, List<CompletableFuture<Message>>>
-                { it.map { message -> message.editMessage(renderVote().build()).submit() } },
-                VoteCache.THREAD_POOL
-            )
-            // Map futures
-            .thenAcceptAsync(Consumer {
-                CompletableFuture.allOf(*it.toTypedArray())
-                    .thenRunAsync(Runnable {
-                        future.complete(null)
-                    }, VoteCache.THREAD_POOL)
-            }, VoteCache.THREAD_POOL)
-        return future
+            .toCompletableFuture()
+            .also {
+                it.thenAcceptAsync(Consumer<Set<Message>> { messages ->
+                    val embed = renderVote().build()
+                    messages.forEach { message ->
+                        message.editMessage(embed).queue()
+                    }
+                }, VoteCache.THREAD_POOL)
+            }
     }
 
     fun addVote(user: User, answer: Int): CompletionStage<Void> {
@@ -127,9 +121,8 @@ class VoteController(
         // Register option
         vote.options.add(option)
         vote.saveAsync()
-        vote.messages.thenAccept {
-            it.keys.forEach { message ->
-                message.editMessage(renderVote().build()).queue()
+        updateMessages().thenAccept {
+            it.forEach { message ->
                 Misc.addReaction(emote, message).queue()
             }
         }
@@ -170,9 +163,8 @@ class VoteController(
         }
         vote.options.removeAt(optionIndex)
         vote.saveAsync()
-        vote.messages.thenAccept {
-            it.keys.forEach { message ->
-                message.editMessage(renderVote().build()).queue()
+        updateMessages().thenAccept {
+            it.forEach { message ->
                 Utils.removeReactionByIdentifier(emote, message).queue()
             }
         }
@@ -180,6 +172,10 @@ class VoteController(
 
     fun deleteVote() {
         vote.deleteAsync()
+        if (vote.answers.isEmpty()) {
+            vote.messages.thenApply { it.keys }
+                .thenAccept { fallbackEdit(it) }
+        }
         // Only generate chart when it's possible
         if (vote.options.size == vote.options.distinct().size) {
             // Generate chart
