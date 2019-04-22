@@ -44,6 +44,7 @@ class InfoCommand : Command(
                 .addField(context.translate("command.info.author"), "[Schlaubi#1337](https://rittmeister.in)", true)
                 .addField(context.translate("command.info.community"), "[CrazyPilz#0117](https://crazypilz.ga)", true)
                 .addField(context.translate("command.info.designer"), "[Rxsto#1337](https://rxsto.me)", true)
+                // Don't judge me for this. It's all IntelliJ's fault
                 .addField(
                     context.translate("command.info.source"),
                     "[github.com](https://github.com/DRSchlaubi/votebot)",

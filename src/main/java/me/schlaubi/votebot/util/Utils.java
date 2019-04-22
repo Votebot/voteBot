@@ -19,9 +19,12 @@
 
 package me.schlaubi.votebot.util;
 
+import cc.hawkbot.regnum.client.util.Misc;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.requests.RestAction;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class Utils {
     public static final String[] EMOTES = {"🍏", "🍎", "🍐", "🍊", "🍋", "🍔", "🍟", "🌭", "🍕", "🍝", "⚽", "🏀", "🏈", "⚾", "🎾", "☎", "📟", "💿", "🖲", "🕹", "🎥", "⌚", "📱", "⏰"};
@@ -30,5 +33,19 @@ public class Utils {
 
     public static String mentionEmote(String emoteId, Guild guild) {
         return guild.getEmoteById(emoteId).getAsMention();
+    }
+
+    public static RestAction<Void> removeReactionByIdentifier(String emote, Message message) {
+        return removeReactionByIdentifier(emote, message, message.getGuild());
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static RestAction<Void> removeReactionByIdentifier(String emote, Message message, Guild guild) {
+        var channel = message.getChannel();
+        final String messageId = message.getId();
+        if (Misc.isNumeric(emote)) {
+            return channel.removeReactionById(messageId, guild.getEmoteById(emote));
+        }
+        return message.getChannel().removeReactionById(messageId, emote);
     }
 }

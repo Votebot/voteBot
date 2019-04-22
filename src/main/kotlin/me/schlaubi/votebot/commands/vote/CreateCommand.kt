@@ -49,18 +49,20 @@ class CreateCommand(bot: VoteBot) : VoteBotCommand(
     description = "Creates a vote with individual settings"
 ) {
     override fun execute(args: Arguments, context: Context) {
-        context.sendMessage(
-            EmbedUtil.info(
-                context.translate("vote.creation.step1.info.title"),
-                context.translate("vote.creation.step1.info.description")
-            )
-        ).queue {
-            val builder = SetupBuilder(bot)
-            builder.authorizedUsers = listOf(context.author)
-            builder.message = it
-            builder.timeout = 30
-            builder.timeUnit = TimeUnit.SECONDS
-            builder.build()
+        hasNoVote(context) {
+            context.sendMessage(
+                EmbedUtil.info(
+                    context.translate("vote.creation.step1.info.title"),
+                    context.translate("vote.creation.step1.info.description")
+                )
+            ).queue {
+                val builder = SetupBuilder(bot)
+                builder.authorizedUsers = listOf(context.author)
+                builder.message = it
+                builder.timeout = 30
+                builder.timeUnit = TimeUnit.SECONDS
+                builder.build()
+            }
         }
     }
 }

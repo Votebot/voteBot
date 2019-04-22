@@ -21,8 +21,12 @@ package me.schlaubi.votebot.commands
 
 import cc.hawkbot.regnum.client.command.Command
 import cc.hawkbot.regnum.client.command.Group
+import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.IPermissions
+import cc.hawkbot.regnum.client.util.EmbedUtil
+import cc.hawkbot.regnum.client.util.Misc
 import me.schlaubi.votebot.core.VoteBot
+import me.schlaubi.votebot.entities.Vote
 
 /**
  * Extension of [Command] adding [bot] field.
@@ -37,4 +41,53 @@ abstract class VoteBotCommand(
     usage: String = "",
     exampleUsage: String = "",
     description: String
-): Command(group, displayName, aliases, permissions, usage, exampleUsage, description)
+) : Command(group, displayName, aliases, permissions, usage, exampleUsage, description) {
+
+    /**
+     * Checks if vote exists in [context] and passes it into [action]
+     */
+    protected fun hasVote(context: Context, action: (Vote) -> Unit) {
+        val vote = bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
+            EmbedUtil.error(
+                context.translate("vote.notexist.title"),
+                context.translate("vote.notexist.description")
+            )
+        ).queue()
+        action(vote)
+    }
+
+    protected fun hasNoVote(context: Context, action: () -> Unit) {
+        bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
+            EmbedUtil.error(
+                context.translate("vote.notexist.title"),
+                context.translate("vote.notexist.description")
+            )
+        ).queue()
+        action()
+    }
+
+    protected fun validateInt(context: Context, argument: String, action: (Int) -> Unit) =
+        validateNumber(context, argument, { argument.toInt() }, action)
+
+    protected fun validateLong(context: Context, argument: String, action: (Long) -> Unit) =
+        validateNumber(context, argument, { argument.toLong() }, action)
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected fun <T> validateNumber(
+        context: Context,
+        argument: String,
+        parser: (argument: String) -> T,
+        action: (T) -> Unit
+    ) {
+        if (!Misc.isNumeric(argument)) {
+            return context.sendMessage(
+                EmbedUtil.error(
+                    context.translate("phrases.invalid.number.title"),
+                    context.translate("phrases.invalid.number.description")
+                )
+            ).queue()
+        }
+        action(parser(argument))
+    }
+}
+

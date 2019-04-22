@@ -49,38 +49,31 @@ class QuickCreateCommand(
         }
 
         // Check if the use already has a vote
-        if (bot.voteCache.getVoteByMember(context.member) != null) {
-            return context.sendMessage(
-                EmbedUtil
-                    .error(
-                        context.translate("vote.error.already.title"),
-                        context.translate("vote.error.already.description")
-                    )
-            ).queue()
-        }
-        // Verify that this channels is suitable for vote messages (perm-check)
-        checkPermissions(context) {
-            // Parse arguments
-            val heading = arguments[0]
-            val options = arguments.subList(1, arguments.size)
-            if (options.size > 10) {
-                return@checkPermissions context.sendMessage(
-                    EmbedUtil.error(
-                        context.translate("vote.limit.title"),
-                        context.translate("vote.limit.description")
-                    )
-                ).queue()
+        hasNoVote(context) {
+            // Verify that this channels is suitable for vote messages (perm-check)
+            checkPermissions(context) {
+                // Parse arguments
+                val heading = arguments[0]
+                val options = arguments.subList(1, arguments.size)
+                if (options.size > 10) {
+                    return@checkPermissions context.sendMessage(
+                        EmbedUtil.error(
+                            context.translate("vote.limit.title"),
+                            context.translate("vote.limit.description")
+                        )
+                    ).queue()
+                }
+                val user = bot.userCache[context.author]
+                // Create vote
+                bot.voteCache.initializeVote(
+                    context.channel,
+                    context.member,
+                    heading,
+                    options,
+                    user.defaultMaximumVotes,
+                    user.defaultMaximumChanges
+                )
             }
-            val user = bot.userCache[context.author]
-            // Create vote
-            bot.voteCache.initializeVote(
-                context.channel,
-                context.member,
-                heading,
-                options,
-                user.defaultMaximumVotes,
-                user.defaultMaximumChanges
-            )
         }
     }
 }

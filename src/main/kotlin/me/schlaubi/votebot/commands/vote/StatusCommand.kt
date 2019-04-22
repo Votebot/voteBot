@@ -32,7 +32,7 @@ import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
 import java.util.concurrent.CompletableFuture
 
-class StatusCommand(bot: VoteBot): VoteBotCommand(
+class StatusCommand(bot: VoteBot) : VoteBotCommand(
     bot,
     Group.VOTE,
     "Info",
@@ -44,45 +44,43 @@ class StatusCommand(bot: VoteBot): VoteBotCommand(
 ) {
     override fun execute(args: Arguments, context: Context) {
         // Verify that this member owns a vote
-        val vote = bot.voteCache.getVoteByMember(context.member) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.notexist.title"),
-                context.translate("vote.notexist.description")
-            )
-        ).queue()
-        // Verify that this channels is suitable for vote messages (perm-check)
-        checkPermissions(context) {
-            // Render embed
-            val embed = vote.renderVote()
-            // Check for new
-            if (!args.isEmpty() && args[0] == "-new") {
-                // Generate new vote messages
-                context.sendMessage(
-                    EmbedUtil.info(
-                        context.translate("vote.loading.title"),
-                        context.translate("vote.loading.description")
-                            .format(Emotes.LOADING)
-                    )
-                ).queue {
-                    // Add reactions
-                    val futures = mutableListOf<CompletableFuture<Void>>()
-                    vote.emoteMapping.keys.forEach { emote ->
-                        futures += Misc.addReaction(emote, it).submit()
+        hasVote(context) { vote ->
+            // Verify that this channels is suitable for vote messages (perm-check)
+            checkPermissions(context) {
+                // Render embed
+                val embed = vote.renderVote()
+                // Check for new
+                if (!args.isEmpty() && args[0] == "-new") {
+                    // Generate new vote messages
+                    context.sendMessage(
+                        EmbedUtil.info(
+                            context.translate("vote.loading.title"),
+                            context.translate("vote.loading.description")
+                                .format(Emotes.LOADING)
+                        )
+                    ).queue {
+                        // Add reactions
+                        val futures = mutableListOf<CompletableFuture<Void>>()
+                        vote.emoteMapping.keys.forEach { emote ->
+                            futures += Misc.addReaction(emote, it).submit()
+                        }
+                        // Register messages
+                        val messageIds = vote.messagesIds.toMutableMap()
+                        messageIds[it.idLong] = it.channel.idLong
+                        vote.messagesIds = messageIds
+                        // Save and edit message
+                        CompletableFuture.allOf(*futures.toTypedArray(), vote.saveAsync().toCompletableFuture())
+                            .thenRun {
+                                it.editMessage(vote.renderVote().build()).queue()
+                            }
                     }
-                    // Register messages
-                    val messageIds = vote.messagesIds.toMutableMap()
-                    messageIds[it.idLong] = it.channel.idLong
-                    vote.messagesIds = messageIds
-                    // Save and edit message
-                    CompletableFuture.allOf(*futures.toTypedArray(), vote.saveAsync().toCompletableFuture()).thenRun {
-                        it.editMessage(vote.renderVote().build()).queue()
-                    }
+                } else {
+                    // Clarify that this is just a static message
+                    embed.setFooter("Please do not vote on this message!", null)
+                    context.sendMessage(embed).queue()
                 }
-            } else {
-                // Clarify that this is just a static message
-                embed.setFooter("Please do not vote on this message!", null)
-                context.sendMessage(embed).queue()
             }
         }
     }
+
 }

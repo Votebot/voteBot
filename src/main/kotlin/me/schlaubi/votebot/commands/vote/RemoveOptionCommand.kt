@@ -31,7 +31,7 @@ import me.schlaubi.votebot.core.VoteBot
 
 class RemoveOptionCommand(
     bot: VoteBot
-): VoteBotCommand(
+) : VoteBotCommand(
     bot,
     Group.VOTE,
     "Remove option",
@@ -45,23 +45,30 @@ class RemoveOptionCommand(
         if (args.isEmpty()) {
             return context.sendHelp().queue()
         }
-        val vote = bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.notexist.title"),
-                context.translate("vote.notexist.description")
-            )
-        ).queue()
-        val input = args[0]
-        val index = if (Misc.isNumeric(args[0])) {
-            input.toInt() - 1
-        } else {
-            vote.options.indexOf(args.string<String>())
-        }
+        hasVote(context) { vote ->
+            val input = args[0]
+            val index = if (Misc.isNumeric(args[0])) {
+                input.toInt() - 1
+            } else {
+                vote.options.indexOf(args.string<String>())
+            }
 
-        if (vote.options.getOrNull(index) == null) {
-            return context.sendMessage("INVALID").queue()
+            if (vote.options.getOrNull(index) == null) {
+                return@hasVote context.sendMessage(
+                    EmbedUtil.error(
+                        context.translate("command.removeoption.invalid.title"),
+                        context.translate("command.removeoption.invalid.description")
+                    )
+                ).queue()
+            }
+            vote.controller.removeOption(index)
+            context.sendMessage(
+                EmbedUtil.success(
+                    context.translate("command.removeoption.success.title"),
+                    context.translate("command.removeoption.success.description")
+                        .format(vote.options[index])
+                )
+            ).queue()
         }
-        vote.controller.removeOption(index)
-        context.sendMessage("SUCCESS").queue()
     }
 }

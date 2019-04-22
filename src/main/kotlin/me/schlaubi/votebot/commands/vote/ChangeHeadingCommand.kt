@@ -44,20 +44,16 @@ class ChangeHeadingCommand(
         if (args.isEmpty()) {
             return context.sendHelp().queue()
         }
-        val vote = bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.notexist.title"),
-                context.translate("vote.notexist.description")
-            )
-        ).queue()
-        val heading = args.string<String>()
-        vote.controller.setHeading(heading)
-        context.sendMessage(
-            EmbedUtil.success(
-                context.translate("command.changeheading.success.title"),
-                context.translate("command.changeheading.success.description")
-                    .format(heading)
-            )
-        ).queue()
+        hasVote(context) {
+            val heading = args.string<String>()
+            it.controller.setHeading(heading)
+            context.sendMessage(
+                EmbedUtil.success(
+                    context.translate("command.changeheading.success.title"),
+                    context.translate("command.changeheading.success.description")
+                        .format(heading)
+                )
+            ).queue()
+        }
     }
 }

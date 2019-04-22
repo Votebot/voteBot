@@ -40,13 +40,12 @@ class VoteCacheImpl(
         storage.filterNot { bot.regnum.discord.shardManager.getGuildById(it.guildId) == null }.map { it.cache = this }
     }
 
-    override fun getVoteByMessage(messageId: Long, guildId: Long): Vote? {
-        return storage.firstOrNull { it.messagesIds.containsKey(messageId) && it.guildId == guildId }
-    }
+    override fun getVoteByMessage(messageId: Long, guildId: Long) =
+        storage.firstOrNull { it.messagesIds.containsKey(messageId) && it.guildId == guildId }
 
-    override fun getVoteByUser(user: User, guild: Guild): Vote? {
-        return storage.firstOrNull { it.authorId == user.idLong && it.guildId == guild.idLong }
-    }
+
+    override fun getVoteByUser(user: User, guild: Guild) =
+        storage.firstOrNull { it.authorId == user.idLong && it.guildId == guild.idLong }
 
     override fun updateVote(vote: Vote) {
         if (vote in storage) {
@@ -55,9 +54,7 @@ class VoteCacheImpl(
         storage.add(vote)
     }
 
-    override fun deleteVote(vote: Vote) {
-        storage.remove(vote)
-    }
+    override fun deleteVote(vote: Vote) = storage.remove(vote).run { Unit }
 
     override fun createVote(
         author: Member,

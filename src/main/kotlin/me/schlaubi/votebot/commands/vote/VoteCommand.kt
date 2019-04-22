@@ -24,7 +24,6 @@ import cc.hawkbot.regnum.client.command.context.Arguments
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
 import cc.hawkbot.regnum.client.util.EmbedUtil
-import cc.hawkbot.regnum.client.util.Misc
 import me.schlaubi.votebot.VOTE
 import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
@@ -47,66 +46,68 @@ class VoteCommand(
         }
 
         // Verify that message id is a number
-        if (!Misc.isNumeric(args[0])) {
-            return context.sendMessage(EmbedUtil.error(
-                context.translate("phrases.invalid.number.title"),
-                context.translate("phrases.invalid.number.description")
-            )).queue()
-        }
+        validateLong(context, args[0]) { messageId ->
+            // Check if there is a vote attached to the message id
+            val vote =
+                bot.voteCache.getVoteByMessage(messageId, context.guild.idLong)
+                    ?: return@validateLong context.sendMessage(
+                        EmbedUtil.error(
+                            context.translate("vote.invalid.title"),
+                            context.translate("vote.invalid.description")
+                        )
+                    ).queue()
 
-        // Check if there is a vote attached to the message id
-        val vote = bot.voteCache.getVoteByMessage(args[0].toLong(), context.guild.idLong) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.invalid.title"),
-                context.translate("vote.invalid.description")
-            )
-        ).queue()
-
-        // Check if index is a number
-        if (!Misc.isNumeric(args[1])) {
-            return context.sendMessage(EmbedUtil.error(
-                context.translate("phrases.invalid.number.title"),
-                context.translate("phrases.invalid.number.description")
-            )).queue()
-        }
-
-        // Subtract one because arrays are null-based (EXTREMELY COOL FOR END-USERS!!)
-        val index = args[1].toInt() - 1
-        try {
-            // Register vote and send success message
-            vote.controller.addVote(context.author, index).thenRun {
-                context.sendMessage(EmbedUtil.success(
-                    context.translate("vote.success.title"),
-                    context.translate("vote.success.description")
-                        .format(args[1])
-                )).queue()
-            }
-        }
-        // Handle known errors
-        catch (e: IllegalArgumentException) {
-            if (e.message == "This option does not exist") {
-                context.sendMessage(EmbedUtil.error(
-                    context.translate("vote.invalid.option.title"),
-                    context.translate("vote.invalid.option.description")
-                )).queue()
-            } else {
-                context.sendMessage(EmbedUtil.warn(
-                    context.translate("vote.same.title"),
-                    context.translate("vote.same.description")
-                )).queue()
-            }
-        } catch (e: IllegalStateException) {
-            @Suppress("SpellCheckingInspection")
-            if (vote.maximumChanges > 1) {
-                context.sendMessage(EmbedUtil.error(
-                    context.translate("vote.toomany.changes.title"),
-                    context.translate("vote.toomany.changes.description")
-                )).queue()
-            } else {
-                context.sendMessage(EmbedUtil.error(
-                    context.translate("vote.toomany.votes.title"),
-                    context.translate("vote.toomany.votes.description")
-                )).queue()
+            // Check if index is a number
+            validateInt(context, args[1]) { indexRaw ->
+                // Subtract one because arrays are null-based (EXTREMELY COOL FOR END-USERS!!)
+                val index = indexRaw - 1
+                try {
+                    // Register vote and send success message
+                    vote.controller.addVote(context.author, index).thenRun {
+                        context.sendMessage(
+                            EmbedUtil.success(
+                                context.translate("vote.success.title"),
+                                context.translate("vote.success.description")
+                                    .format(args[1])
+                            )
+                        ).queue()
+                    }
+                }
+                // Handle known errors
+                catch (e: IllegalArgumentException) {
+                    if (e.message == "This option does not exist") {
+                        context.sendMessage(
+                            EmbedUtil.error(
+                                context.translate("vote.invalid.option.title"),
+                                context.translate("vote.invalid.option.description")
+                            )
+                        ).queue()
+                    } else {
+                        context.sendMessage(
+                            EmbedUtil.warn(
+                                context.translate("vote.same.title"),
+                                context.translate("vote.same.description")
+                            )
+                        ).queue()
+                    }
+                } catch (e: IllegalStateException) {
+                    @Suppress("SpellCheckingInspection")
+                    if (vote.maximumChanges > 1) {
+                        context.sendMessage(
+                            EmbedUtil.error(
+                                context.translate("vote.toomany.changes.title"),
+                                context.translate("vote.toomany.changes.description")
+                            )
+                        ).queue()
+                    } else {
+                        context.sendMessage(
+                            EmbedUtil.error(
+                                context.translate("vote.toomany.votes.title"),
+                                context.translate("vote.toomany.votes.description")
+                            )
+                        ).queue()
+                    }
+                }
             }
         }
     }

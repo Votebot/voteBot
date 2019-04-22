@@ -92,24 +92,9 @@ public class Vote extends CassandraEntity<Vote> {
         this.maximumChanges = maximumChanges;
     }
 
+    @Deprecated
     public EmbedBuilder renderVote() {
-        var user = getAuthor().getUser();
-        var builder = new EmbedBuilder()
-                .setColor(Colors.BLURLPLE)
-                .setAuthor(user.getName(), "https://votevot.hawkbot.cc/view/", user.getAvatarUrl())
-                .setFooter("React or use the vote command to vote", user.getJDA().getSelfUser().getAvatarUrl())
-                .setTimestamp(createdAt)
-                .setTitle(heading);
-        StringBuilder answers = new StringBuilder();
-        AtomicInteger count = new AtomicInteger();
-        options.forEach(option -> {
-            var voteCount = this.answers.values().stream().filter(chosen -> chosen.contains(count.get())).count();
-            var emoteRaw = Misc.getKeyOrNullByValue(emoteMapping, count.get());
-            assert emoteRaw != null;
-            answers.append("**").append(count.getAndIncrement() + 1).append("**").append(". ").append(Helpers.isNumeric(emoteRaw) ? Utils.mentionEmote(emoteRaw, getGuild()) : emoteRaw).append(" - ").append(option).append(": `").append(voteCount).append('`').append(System.lineSeparator());
-        });
-        builder.setDescription(answers);
-        return builder;
+        return getController().renderVote();
     }
 
     @Override

@@ -44,29 +44,25 @@ class AddOptionCommand(
         if (args.isEmpty()) {
             return context.sendHelp().queue()
         }
-        val vote = bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
-            EmbedUtil.error(
-                context.translate("vote.notexist.title"),
-                context.translate("vote.notexist.description")
-            )
-        ).queue()
-        val option = args.string<String>()
-        try {
-            vote.controller.addOption(option)
-        } catch (e: IllegalStateException) {
-            return context.sendMessage(
-                EmbedUtil.error(
-                    context.translate("vote.limit.title"),
-                    context.translate("vote.limit.description")
+        hasVote(context) {
+            val option = args.string<String>()
+            try {
+                it.controller.addOption(option)
+            } catch (e: IllegalStateException) {
+                return@hasVote context.sendMessage(
+                    EmbedUtil.error(
+                        context.translate("vote.limit.title"),
+                        context.translate("vote.limit.description")
+                    )
+                ).queue()
+            }
+            context.sendMessage(
+                EmbedUtil.success(
+                    context.translate("command.addoption.success.title"),
+                    context.translate("command.addoption.success.description")
+                        .format(option)
                 )
             ).queue()
         }
-        context.sendMessage(
-            EmbedUtil.success(
-                context.translate("command.addoption.success.title"),
-                context.translate("command.addoption.success.description")
-                    .format(option)
-            )
-        ).queue()
     }
 }

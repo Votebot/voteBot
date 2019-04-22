@@ -24,7 +24,6 @@ import cc.hawkbot.regnum.client.command.context.Arguments
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.CommandPermissions
 import cc.hawkbot.regnum.client.util.EmbedUtil
-import cc.hawkbot.regnum.client.util.Misc
 import me.schlaubi.votebot.VOTE
 import me.schlaubi.votebot.commands.VoteBotCommand
 import me.schlaubi.votebot.core.VoteBot
@@ -42,46 +41,35 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
         val messageId = args.array.getOrNull(0)
         // Check if user wants to create his own vote and if it exitsts
         val vote = if (messageId == null) {
-            bot.voteCache.getVoteByUser(context.author, context.guild) ?: return context.sendMessage(
-                EmbedUtil.error(
-                    context.translate("vote.notexist.title"),
-                    context.translate("vote.notexist.description")
-                )
-            ).queue()
+            hasVote(context) {}
+            bot.voteCache.getVoteByMember(context.member)!!
         } else {
             // Check if message id is numeric
-            if (!Misc.isNumeric(messageId)) {
+            validateLong(context, args[0]) {}
+            // Check if user is permitted
+            if (!context.regnumUser().hasPermission(
+                    CommandPermissions(
+                        serverAdminExclusive = true,
+                        node = "close.admin"
+                    ), context.guild.idLong
+                )
+            ) {
                 return context.sendMessage(
                     EmbedUtil.error(
-                        context.translate("phrases.invalid.number.title"),
-                        context.translate("phrases.invalid.number.description")
-                    )
-                ).queue()
-            } else {
-                // Check if user is permitted
-                if (!context.regnumUser().hasPermission(
-                        CommandPermissions(
-                            serverAdminExclusive = true,
-                            node = "close.admin"
-                        ), context.guild.idLong
-                    )
-                ) {
-                    return context.sendMessage(
-                        EmbedUtil.error(
-                            context.translate("command.close.permission.title"),
-                            context.translate("command.close.permission.description")
-                        )
-                    ).queue()
-                }
-                // Verify that vote exists
-                bot.voteCache.getVoteByMessage(messageId.toLong(), context.guild.idLong) ?: return context.sendMessage(
-                    EmbedUtil.error(
-                        context.translate("vote.invalid.title"),
-                        context.translate("vote.invalid.description")
+                        context.translate("command.close.permission.title"),
+                        context.translate("command.close.permission.description")
                     )
                 ).queue()
             }
+            // Verify that vote exists
+            bot.voteCache.getVoteByMessage(messageId.toLong(), context.guild.idLong) ?: return context.sendMessage(
+                EmbedUtil.error(
+                    context.translate("vote.invalid.title"),
+                    context.translate("vote.invalid.description")
+                )
+            ).queue()
         }
+
         // Delete vote and catch for dupe error
         try {
             vote.controller.deleteVote()

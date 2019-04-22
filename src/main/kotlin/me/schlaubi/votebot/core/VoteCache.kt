@@ -22,7 +22,7 @@ package me.schlaubi.votebot.core
 import cc.hawkbot.regnum.client.util.*
 import cc.hawkbot.regnum.util.DefaultThreadFactory
 import me.schlaubi.votebot.entities.Vote
-import me.schlaubi.votebot.util.Utils
+import me.schlaubi.votebot.getEmotesForGuild
 import net.dv8tion.jda.api.entities.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
@@ -42,9 +42,7 @@ interface VoteCache {
 
     fun getVoteByUser(user: User, guild: Guild): Vote?
 
-    fun getVoteByMember(member: Member): Vote? {
-        return getVoteByUser(member.user, member.guild)
-    }
+    fun getVoteByMember(member: Member) = getVoteByUser(member.user, member.guild)
 
     fun updateVote(vote: Vote)
 
@@ -66,15 +64,7 @@ interface VoteCache {
             )
             , channel
         ).queue {
-            val guild = bot.guildCache[channel.guild]
-            val emotes = Utils.EMOTES.toMutableList()
-            // Add custom emotes if enabled
-            if (guild.usesCustomEmotes()) {
-                val customEmotes = channel.guild.emotes.map { it.id }.toMutableList()
-                emotes.addAll(0, customEmotes)
-            }
-            // It's time to shuffle
-            emotes.shuffle()
+            val emotes = channel.guild.getEmotesForGuild(bot)
             val emoteMapping = mutableMapOf<String, Int>()
             val iterator = emotes.iterator()
             // Randomly map emotes to options

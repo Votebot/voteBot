@@ -24,7 +24,10 @@ import cc.hawkbot.regnum.client.command.GroupBuilder
 import cc.hawkbot.regnum.client.command.context.Context
 import cc.hawkbot.regnum.client.command.permission.GroupPermissions
 import cc.hawkbot.regnum.client.util.EmbedUtil
+import me.schlaubi.votebot.core.VoteBot
+import me.schlaubi.votebot.util.Utils
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.MessageReaction
 
 private val VOTE_GROUP = GroupBuilder()
@@ -53,7 +56,14 @@ fun MessageReaction.ReactionEmote.identifier(): String {
  * Checks permissions for [context] and executes [action] or send an error message.
  */
 fun checkPermissions(context: Context, action: () -> Unit) {
-    if (!context.me.hasPermission(context.channel, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES)) {
+    if (!context.me.hasPermission(
+            context.channel,
+            Permission.MESSAGE_EMBED_LINKS,
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_ADD_REACTION,
+            Permission.MESSAGE_ATTACH_FILES
+        )
+    ) {
         return context.sendMessage(
             EmbedUtil.error(
                 context.translate("vote.error.permissions.title"),
@@ -62,4 +72,17 @@ fun checkPermissions(context: Context, action: () -> Unit) {
         ).queue()
     }
     action()
+}
+
+/**
+ * Returns all available emotes for the [Guild].
+ */
+fun Guild.getEmotesForGuild(bot: VoteBot): MutableList<String> {
+    val voteGuild = bot.guildCache[this]
+    val defaultEmotes = Utils.EMOTES.toMutableList()
+    if (voteGuild.usesCustomEmotes()) {
+        defaultEmotes.addAll(0, this.emotes.map { it.id })
+    }
+    defaultEmotes.shuffle()
+    return defaultEmotes
 }
