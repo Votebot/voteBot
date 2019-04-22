@@ -22,11 +22,11 @@ VoteBot is back again, and it's better than before (at least I tried to make it 
  - The word `Ability` got mentioned exactly 10 times in this list and I am sorry for that
  
 # FAQ
- - Where can I invite the bot?
- - Why does the bot need `MESSAGE_MANAGE` and `MESSAGE_EXT_EMOTES` permissions?
- - Why does the bot remove all reactions from votes?
- - Can I take a look at the source code?
- - I found a bug where can I report it?
+ - [Where can I invite the bot?](#where-can-i-invite-the-bot)
+ - [Why does the bot need `MESSAGE_MANAGE` and `MESSAGE_EXT_EMOTES` permissions?](#why-does-the-bot-need-message_manage-and-message_ext_emotes-permissions)
+ - [Why does the bot remove all reactions from votes?](#why-does-the-bot-remove-all-reactions-from-votes)
+ - [Can I take a look at the source code?](#can-i-take-a-look-at-the-source-code)
+ - [I found a bug where can I report it?](#i-found-a-bug-where-can-i-report-it)
  
 ### Where can I invite the bot?
 Right [here](https://discordapp.com/api/oauth2/authorize?client_id=569936566965764126&permissions=288768&scope=bot)
