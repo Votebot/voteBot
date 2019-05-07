@@ -38,7 +38,7 @@ repositories {
 dependencies {
 
     // Regnum
-    compile("cc.hawkbot.regnum", "client", "0.0.3")
+    compile("cc.hawkbot.regnum", "client", "0.0.5")
 
     // Logging
     compile("org.apache.logging.log4j", "log4j-core", "2.11.2")

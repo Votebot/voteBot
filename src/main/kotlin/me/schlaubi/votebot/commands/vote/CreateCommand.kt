@@ -49,6 +49,11 @@ class CreateCommand(bot: VoteBot) : VoteBotCommand(
     description = "Creates a vote with individual settings"
 ) {
     override fun execute(args: Arguments, context: Context) {
+        if (true) {
+            return context.sendMessage("Unfortunately because of massive bugs we had to disable that command" +
+                    "We hope to be able to bring it back soon. Thank you for you patience")
+                .queue()
+        }
         hasNoVote(context) {
             context.sendMessage(
                 EmbedUtil.info(

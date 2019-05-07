@@ -41,6 +41,12 @@ class SettingsCommand(
     "Changes your own settings for storage"
 ) {
     override fun execute(args: Arguments, context: Context) {
+        if (true) {
+            return context.sendMessage("Unfortunately because of massive bugs we had to disable that command" +
+                    "We hope to be able to bring it back soon. Thank you for you patience")
+                .queue()
+        }
+
         val user = bot.userCache[context.author]
         if (args.size == 0) {
             return context.sendMessage(
