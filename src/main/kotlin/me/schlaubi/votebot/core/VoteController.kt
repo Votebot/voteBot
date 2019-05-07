@@ -21,6 +21,7 @@ package me.schlaubi.votebot.core
 
 import cc.hawkbot.regnum.client.util.Colors
 import cc.hawkbot.regnum.client.util.Misc
+import cc.hawkbot.regnum.client.util.SafeMessage
 import cc.hawkbot.regnum.client.util.TranslationUtil
 import me.schlaubi.votebot.core.graphics.PieChart
 import me.schlaubi.votebot.core.graphics.PieTile
@@ -175,6 +176,7 @@ class VoteController(
         if (vote.answers.isEmpty()) {
             vote.messages.thenApply { it.keys }
                 .thenAccept { fallbackEdit(it) }
+            throw IllegalStateException("No votes")
         }
         // Only generate chart when it's possible
         if (vote.options.size == vote.options.distinct().size) {
@@ -249,6 +251,7 @@ class VoteController(
     private fun fallbackEdit(messages: MutableSet<Message>) {
         messages.forEach {
             it.editMessage(renderVote().setFooter("Vote closed!", null).build()).queue()
+            it.clearReactions().queue()
         }
     }
 

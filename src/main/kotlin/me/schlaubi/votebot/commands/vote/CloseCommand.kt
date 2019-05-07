@@ -88,6 +88,13 @@ class CloseCommand(bot: VoteBot) : VoteBotCommand(
                     context.translate("vote.error.dupe.description")
                 )
             ).queue()
+        } catch (e: IllegalStateException) {
+            return context.sendMessage(
+                EmbedUtil.warn(
+                    context.translate("vote.error.empty.title"),
+                    context.translate("vote.error.empty.description")
+                )
+            ).queue()
 
         }
         // Confirm deletion

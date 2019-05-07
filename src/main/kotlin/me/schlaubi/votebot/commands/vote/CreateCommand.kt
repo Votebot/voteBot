@@ -50,7 +50,9 @@ class CreateCommand(bot: VoteBot) : VoteBotCommand(
 ) {
     override fun execute(args: Arguments, context: Context) {
         if (true) {
-            return context.sendMessage("Unfortunately because of massive bugs we had to disable that command" +
+            return context.sendMessage(
+                "**IMPORTANT**: To create votes you can still use the `v!qc` command!\n" +
+                "Unfortunately because of massive bugs we had to disable that command" +
                     "We hope to be able to bring it back soon. Thank you for you patience")
                 .queue()
         }
