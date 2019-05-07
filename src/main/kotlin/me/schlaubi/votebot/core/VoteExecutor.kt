@@ -24,6 +24,7 @@ import cc.hawkbot.regnum.client.util.Misc
 import cc.hawkbot.regnum.client.util.TranslationUtil
 import me.schlaubi.votebot.entities.Vote
 import me.schlaubi.votebot.identifier
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent
@@ -44,7 +45,9 @@ class VoteExecutor(
             }
             // Remove the reaction anyways :P
             val user = event.user
-            event.reaction.removeReaction(user).queue()
+            if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_MANAGE)) {
+                event.reaction.removeReaction(user).queue()
+            }
             if (user.isBot) {
                 return@runChecks
             }
