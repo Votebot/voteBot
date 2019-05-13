@@ -1,4 +1,4 @@
-# VotBot
+# VoteBot
 [INSERT BADGES HERE]
 
 **Warning!**: Vote bot sometimes take same time to respond to requests like commands if that's the case please do not spam any command. If the bot is not answering after some seconds feel free to contact our support [here](https://support.hawkbot.cc) or [here](https://discord.gg/j9RCgsn)
