@@ -19,12 +19,25 @@
 
 package wtf.votebot.bot.io
 
+/**
+ * Builder for [Config].
+ */
 class ConfigBuilder {
 
+    /**
+     * @see Config.devEnabled
+     */
     var devEnabled = false
 
+    /**
+     * @see Config.discordToken
+     */
     var discordToken = ""
 
+    /**
+     * Builds a [Config].
+     * @see ImmutableConfig
+     */
     fun build(): Config {
         return ImmutableConfig(devEnabled, discordToken)
     }

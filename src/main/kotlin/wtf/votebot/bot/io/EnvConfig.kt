@@ -19,13 +19,30 @@
 
 package wtf.votebot.bot.io
 
-interface Config {
-    /**
-     * Whether the bot runs in developer mode or not.
-     */
-    val devEnabled: Boolean
-    /**
-     * The Discord API token.
-     */
-    val discordToken: String
+import io.github.cdimascio.dotenv.dotenv
+import wtf.votebot.bot.exceptions.StartupError
+
+/**
+ * Implementation of [Config] that reads the config from an `.env` file.
+ */
+class EnvConfig : Config {
+
+    private val dotenv = dotenv()
+
+    override val devEnabled: Boolean = true
+    override val discordToken: String
+        get() = dotenv[DISCORD_TOKEN] ?: notFound(DISCORD_TOKEN)
+
+    @Suppress("SameParameterValue") // There will be more options
+    private fun notFound(option: String): Nothing = throw StartupError(
+        "Could not find $option in .env file." +
+                "Please make sure to include all options from the example"
+    )
+
+    companion object {
+        /**
+         * .env file key for the Discord API token.
+         */
+        const val DISCORD_TOKEN = "DISCORD_TOKEN"
+    }
 }
