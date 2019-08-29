@@ -19,4 +19,8 @@
 
 package wtf.votebot.bot.io
 
+/**
+ * Immutable implementation of [Config].
+ * @see ConfigBuilder
+ */
 class ImmutableConfig(override val devEnabled: Boolean, override val discordToken: String) : Config

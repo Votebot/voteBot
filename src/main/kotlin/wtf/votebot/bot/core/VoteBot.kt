@@ -26,8 +26,11 @@ class VoteBot(
     private val config: Config,
     private val consul: Consul?
 ) {
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread(this::shutdown))
+    }
 
-    fun run() {
-
+    private fun shutdown() {
+        TODO("Add shutdown hook")
     }
 }

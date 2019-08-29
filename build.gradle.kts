@@ -25,6 +25,7 @@ plugins {
     checkstyle
     id("com.github.spotbugs") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.1"
     java
     application
     kotlin("jvm") version "1.3.50"
@@ -48,7 +49,9 @@ dependencies {
     implementation("com.orbitz.consul", "consul-client", "1.3.7")
     implementation("com.configcat", "configcat-java-client", "1.2.0")
     implementation("commons-cli", "commons-cli", "1.4")
+    implementation("io.github.cdimascio", "java-dotenv", "5.1.1")
 
+    detektPlugins("io.gitlab.arturbosch.detekt", "detekt-formatting", "1.0.1")
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
 }
@@ -87,6 +90,11 @@ tasks {
         ignoreFailures = true
         ruleSetConfig = resources.text.fromFile(file("${rootProject.projectDir}/config/pmd/ruleset.xml"))
     }
+}
+
+detekt {
+    input = files("src/main/kotlin")
+    autoCorrect = true
 }
 
 application {

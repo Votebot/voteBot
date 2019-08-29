@@ -17,19 +17,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.exceptions
 
-import com.configcat.ConfigurationChangeListener
-import com.configcat.ConfigurationParser
-import com.google.common.flogger.FluentLogger
-import kotlin.system.exitProcess
-
-class ConfigChangeListener : ConfigurationChangeListener {
-
-    private val log = FluentLogger.forEnclosingClass()
-
-    override fun onConfigurationChanged(parser: ConfigurationParser, newConfiguration: String) {
-        log.atWarning().log("Config got updated. Restart...")
-        exitProcess(0)
-    }
-}
+/**
+ * [Error] that indicates an issue during the startup of the bot.
+ */
+class StartupError @JvmOverloads constructor(
+    message: String?,
+    cause: Throwable? = null,
+    enableSuppression: Boolean = false,
+    writableStackTrace: Boolean = true
+) :
+    Error(message, cause, enableSuppression, writableStackTrace)
