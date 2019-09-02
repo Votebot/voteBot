@@ -17,10 +17,22 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot.core
 
-enum class Environment(val key: String) {
-    DEVELOPMENT("development"),
-    STAGING("staging"),
-    PRODUCTION("production")
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.CallLogging
+import io.ktor.features.DefaultHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.routing.Routing
+import io.ktor.routing.get
+
+fun Application.module() {
+    install(DefaultHeaders)
+    install(CallLogging)
+    install(Routing) {
+        get("/") {
+            context.response.status(HttpStatusCode.OK)
+        }
+    }
 }

@@ -23,20 +23,14 @@ interface Config {
     val environment: String
     val sentryDSN: String
     val discordToken: String
+    val serviceName: String
+    val httpPort: String
 
-    fun development(): Boolean {
-        return environmentType() == Environment.DEVELOPMENT
-    }
+    fun development() = environmentType() == Environment.DEVELOPMENT
 
-    fun staging(): Boolean {
-        return environmentType() == Environment.STAGING
-    }
+    fun staging() = environmentType() == Environment.STAGING
 
-    fun production(): Boolean {
-        return environmentType() == Environment.PRODUCTION
-    }
+    fun production() = environmentType() == Environment.PRODUCTION
 
-    fun environmentType(): Environment {
-        return Environment.valueOf(environment.toLowerCase())
-    }
+    fun environmentType() = Environment.valueOf(environment.toUpperCase())
 }
