@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
     }
 
     // Load Config
-    val configBackend = cli.getOptionObject("config")
+    val configBackend = cli.getParsedOptionValue("config")
 
     val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
 
