@@ -22,7 +22,7 @@ package wtf.votebot.bot.exceptions
 /**
  * [Error] that indicates an issue during the startup of the bot.
  */
-class StartupError @JvmOverloads constructor(
+open class StartupError @JvmOverloads constructor(
     message: String?,
     cause: Throwable? = null,
     enableSuppression: Boolean = false,

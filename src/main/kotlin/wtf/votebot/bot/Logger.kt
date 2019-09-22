@@ -17,13 +17,8 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot
 
-/**
- * ApplicationInfo provides general information about this application.
- * The RELEASE variable gets set by Gradle.
- */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
-}
+import com.google.common.flogger.FluentLogger
+
+typealias Logger = FluentLogger

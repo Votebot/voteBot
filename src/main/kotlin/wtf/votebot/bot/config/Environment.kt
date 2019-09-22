@@ -23,7 +23,7 @@ package wtf.votebot.bot.config
  * An environment defines the environment this service is running in.
  */
 enum class Environment(val key: String) {
-    DEVELOPMENT("development"),
-    STAGING("staging"),
-    PRODUCTION("production")
+    DEVELOPMENT("DEVELOPMENT"),
+    STAGING("STAGING"),
+    PRODUCTION("PRODUCTION")
 }

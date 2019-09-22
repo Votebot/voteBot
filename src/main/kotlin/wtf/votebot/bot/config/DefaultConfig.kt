@@ -17,13 +17,18 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot.config
 
 /**
- * ApplicationInfo provides general information about this application.
- * The RELEASE variable gets set by Gradle.
+ * Default [Config] implementation with default data.
  */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
+class DefaultConfig : Config {
+
+    override var environment: String = Environment.PRODUCTION.key
+    override var sentryDSN: String? = null
+    override var discordToken: String? = null
+    override var httpPort: String = "3245"
+    override val vaultAddress: String = "http://127.0.0.1:8200"
+    override val vaultToken: String? = null
+    override val vaultPath: String = "votebot/"
 }

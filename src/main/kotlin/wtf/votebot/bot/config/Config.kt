@@ -19,34 +19,76 @@
 
 package wtf.votebot.bot.config
 
-/**
- * Config holds data that can be configured and loaded by multiple implementations.
- *
- * Currently supported:
- * - [ConfigCatConfig]
- * - [EnvConfig]
- */
+import wtf.votebot.bot.config.backend.EnvKey
+import wtf.votebot.bot.config.backend.VaultKey
+
 interface Config {
+    /**
+     * Current environment this application is running in.
+     */
+    @ConfigKey("ENVIRONMENT")
+    @EnvKey("ENVIRONMENT")
     val environment: String
-    val sentryDSN: String
-    val discordToken: String
-    val serviceName: String
+
+    /**
+     * Address of the vault instance.
+     */
+    @ConfigKey("VAULT_ADDRESS")
+    @EnvKey("VAULT_ADDRESS")
+    val vaultAddress: String
+
+    /**
+     * Vault access token.
+     */
+    @ConfigRequired
+    @ConfigKey("VAULT_TOKEN")
+    @EnvKey("VAULT_TOKEN")
+    val vaultToken: String?
+
+    @ConfigKey("VAULT_PATH")
+    @EnvKey("VAULT_PATH")
+    val vaultPath: String
+
+    /**
+     * [Sentry](http://sentry.io/) DSN.
+     */
+    @ConfigKey("SENTRY_DSN")
+    @EnvKey("SENTRY_DSN")
+    @VaultKey("sentry_dsn")
+    val sentryDSN: String?
+
+    /**
+     * Discord token of the bot.
+     */
+    @ConfigRequired
+    @ConfigKey("DISCORD_TOKEN")
+    @EnvKey("DISCORD_TOKEN")
+    @VaultKey("discord_token")
+    val discordToken: String?
+
+    /**
+     * HTTP port of the embedded WebServer.
+     */
+    @ConfigRequired
+    @ConfigKey("HTTP_PORT")
+    @EnvKey("HTTP_PORT")
     val httpPort: String
 
     /**
      * @return true if the current environment is a development environment.
      */
-    fun development() = environmentType() == Environment.DEVELOPMENT
+    fun isDevelopment() = environmentType() == Environment.DEVELOPMENT
 
     /**
      * @return true if the current environment is a staging environment.
      */
-    fun staging() = environmentType() == Environment.STAGING
+    fun isStaging() = environmentType() == Environment.STAGING
 
     /**
      * @return true if the current environment is a production environment.
      */
-    fun production() = environmentType() == Environment.PRODUCTION
+    fun isProduction() =
+        environmentType() == Environment.PRODUCTION || !isDevelopment() && !isStaging()
 
     /**
      * @return the application [Environment].

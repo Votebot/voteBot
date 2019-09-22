@@ -17,13 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot.exceptions
 
 /**
- * ApplicationInfo provides general information about this application.
- * The RELEASE variable gets set by Gradle.
+ * [Error] that indicates an issue during the startup of the bot.
  */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
-}
+class ConfigurationError @JvmOverloads constructor(
+    message: String?,
+    cause: Throwable? = null,
+    enableSuppression: Boolean = false,
+    writableStackTrace: Boolean = true
+) : StartupError(message, cause, enableSuppression, writableStackTrace)

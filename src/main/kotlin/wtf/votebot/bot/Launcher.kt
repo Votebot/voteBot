@@ -30,22 +30,14 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import wtf.votebot.bot.config.ConfigCatConfig
-import wtf.votebot.bot.config.EnvConfig
+import wtf.votebot.bot.config.ConfigLoader
+import wtf.votebot.bot.config.backend.EnvBackend
+import wtf.votebot.bot.config.backend.VaultBackend
 import wtf.votebot.bot.core.ServiceRegistry
 import wtf.votebot.bot.core.module
-import wtf.votebot.bot.exceptions.StartupError
-import java.nio.file.Files
-import java.nio.file.Path
 import kotlin.system.exitProcess
 
 private val options = Options()
-    .addOption(
-        Option.builder("C")
-            .longOpt("env")
-            .desc("Set the configuration backend.")
-            .build()
-    )
     .addOption(
         Option.builder("H")
             .longOpt("help")
@@ -62,12 +54,12 @@ private val options = Options()
 /**
  * Application entry point.
  */
+@ExperimentalStdlibApi
 fun main(args: Array<String>) {
     System.setProperty(
         "flogger.backend_factory",
         "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
     )
-    val log = FluentLogger.forEnclosingClass()
 
     // Parse CLI flags
     val cli = DefaultParser().parse(options, args)
@@ -76,14 +68,8 @@ fun main(args: Array<String>) {
         exitProcess(0)
     }
 
-    if (!Files.exists(Path.of(".env"))) {
-        throw StartupError("Place make sure you placed a .env file in the bot's root directory.")
-    }
-
-    // Load Config
-    val configBackend = cli.getParsedOptionValue("config")
-
-    val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
+    val configLoader = ConfigLoader(EnvBackend::class, VaultBackend::class)
+    val config = configLoader.build()
 
     // Initialize Sentry
     Sentry.init(config.sentryDSN)
@@ -91,12 +77,11 @@ fun main(args: Array<String>) {
     Sentry.getStoredClient().release = ApplicationInfo.RELEASE
 
     // WebServer
-    // TODO: Extract variable and pass around
     embeddedServer(Netty, config.httpPort.toInt(), module = Application::module).start()
 
     // Service Registry
-    if (!config.development() || cli.hasOption("FSR")) {
-        ServiceRegistry(config.serviceName, config.httpPort)
+    if (!config.isDevelopment() || cli.hasOption("FSR")) {
+        ServiceRegistry(ApplicationInfo.SERVICE_NAME, config.httpPort)
     }
 }
 

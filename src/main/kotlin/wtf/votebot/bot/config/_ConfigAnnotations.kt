@@ -17,13 +17,20 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot.config
 
 /**
- * ApplicationInfo provides general information about this application.
- * The RELEASE variable gets set by Gradle.
+ * Applies an key to this property
+ * that is used to identify this config value.
  */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
-}
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ConfigKey(val value: String)
+
+/**
+ * Marks an option as required.
+ * Will throw an Exception when not being found
+ */
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ConfigRequired
