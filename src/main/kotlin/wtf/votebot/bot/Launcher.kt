@@ -34,6 +34,7 @@ import wtf.votebot.bot.config.ConfigLoader
 import wtf.votebot.bot.config.backend.EnvBackend
 import wtf.votebot.bot.config.backend.VaultBackend
 import wtf.votebot.bot.core.ServiceRegistry
+import wtf.votebot.bot.core.VoteBot
 import wtf.votebot.bot.core.module
 import kotlin.system.exitProcess
 
@@ -83,6 +84,8 @@ fun main(args: Array<String>) {
     if (!config.isDevelopment() || cli.hasOption("FSR")) {
         ServiceRegistry(ApplicationInfo.SERVICE_NAME, config.httpPort)
     }
+
+    VoteBot(config)
 }
 
 private fun parseCliOptions(args: Array<String>): CommandLine {
