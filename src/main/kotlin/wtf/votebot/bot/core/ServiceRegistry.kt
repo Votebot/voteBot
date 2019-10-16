@@ -47,6 +47,9 @@ class ServiceRegistry(private val serviceName: String, httpPort: String) {
         log.atInfo().log("Registered service as: `%s`", serviceName)
     }
 
+    /**
+     * Unregisters the service from Consul.
+     */
     fun deregister() {
         log.atInfo().log("Deregistering service from Service Registry.")
         agentClient.deregister(serviceName)
