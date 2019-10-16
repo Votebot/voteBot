@@ -81,7 +81,8 @@ fun main(args: Array<String>) {
 
     // Service Registry
     if (!config.isDevelopment() || cli.hasOption("FSR")) {
-        ServiceRegistry(ApplicationInfo.SERVICE_NAME, config.httpPort)
+        val serviceRegistry = ServiceRegistry(ApplicationInfo.SERVICE_NAME, config.httpPort)
+        Runtime.getRuntime().addShutdownHook(Thread { serviceRegistry.deregister() })
     }
 }
 
