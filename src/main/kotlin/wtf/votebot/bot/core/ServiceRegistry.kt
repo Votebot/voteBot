@@ -28,7 +28,7 @@ import com.orbitz.consul.model.agent.Registration
 /**
  * ServiceRegistry handles the the registration of this service in consul.
  */
-class ServiceRegistry(serviceName: String, httpPort: String) {
+class ServiceRegistry(private val serviceName: String, httpPort: String) {
 
     private val log = FluentLogger.forEnclosingClass()
     private val client: Consul = Consul.builder().build()
@@ -45,5 +45,11 @@ class ServiceRegistry(serviceName: String, httpPort: String) {
         agentClient.register(service)
         agentClient.pass(serviceName)
         log.atInfo().log("Registered service as: `%s`", serviceName)
+    }
+
+    fun deregister() {
+        log.atInfo().log("Deregistering service from Service Registry.")
+        agentClient.deregister(serviceName)
+        log.atInfo().log("Deregistered service from Service Registry.")
     }
 }

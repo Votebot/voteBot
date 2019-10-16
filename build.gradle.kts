@@ -94,8 +94,9 @@ tasks {
     }
 
     "shadowJar"(ShadowJar::class) {
-        archiveBaseName.set("shadow")
-        archiveVersion.set(project.version as? String ?: "UnknownVersion")
+        archiveFileName.set("bot.jar")
+        // archiveBaseName.set("shadow")
+        //archiveVersion.set(project.version as? String ?: "UnknownVersion")
     }
 
     checkstyle {
